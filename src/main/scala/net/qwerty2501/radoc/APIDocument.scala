@@ -1,5 +1,8 @@
 package net.qwerty2501.radoc
 
-class APIDocument() {
-  private var documentParts: Map[Version, APIDocumentPart] = Map()
+case class APIDocument private (
+    private var documentParts: Map[Version, APIDocumentPart])
+
+object APIDocument {
+  def apply(): APIDocument = new APIDocument(Map())
 }
