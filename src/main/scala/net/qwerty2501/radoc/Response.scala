@@ -1,14 +1,18 @@
 package net.qwerty2501.radoc
 
-case class Response private (headers: HeaderMap, content: Content)
+case class Response private (status: Status,
+                             headers: HeaderMap,
+                             content: Content)
 
 object Response {
-  def apply(): Response = new Response(HeaderMap(), NothingContent())
-  def apply(headers: HeaderMap): Response =
-    new Response(headers, NothingContent())
-  def apply(text: String): Response =
-    new Response(HeaderMap(), TextContent(text))
-  def apply(content: Content): Response = new Response(HeaderMap(), content)
-  def apply(headers: HeaderMap, text: String): Response =
-    new Response(headers, TextContent(text))
+  def apply(status: Status): Response =
+    new Response(status, HeaderMap(), NothingContent())
+  def apply(status: Status, headers: HeaderMap): Response =
+    new Response(status, headers, NothingContent())
+  def apply(status: Status, text: String): Response =
+    new Response(status, HeaderMap(), TextContent(text))
+  def apply(status: Status, content: Content): Response =
+    new Response(status, HeaderMap(), content)
+  def apply(status: Status, headers: HeaderMap, text: String): Response =
+    new Response(status, headers, TextContent(text))
 }

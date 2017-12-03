@@ -1,8 +1,7 @@
 package net.qwerty2501.radoc
 
 import scala.collection.mutable
-
-trait HeaderMap extends Map[String, String]
+trait HeaderMap extends mutable.Map[String, String]
 
 object HeaderMap {
   def apply(): HeaderMap = new HeaderMapImpl()

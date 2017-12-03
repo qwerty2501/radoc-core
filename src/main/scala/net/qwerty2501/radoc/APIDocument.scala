@@ -2,25 +2,25 @@ package net.qwerty2501.radoc
 
 import scala.collection.mutable
 
-case class APIDocument private(
-    private val apis: Map[APICategory, Seq[API]]) {
-  def +(that: API): APIDocument =
-    this + (APICategory(that.request.path) -> that)
+class APIDocument private () {
 
-  def +(that: (APICategory, API)): APIDocument = {
-    val (category, api) = that
-    val newAPIs = mutable.Map[APICategory, Seq[API]](apis.toSeq: _*)
-    newAPIs.put(category, newAPIs.getOrElse(category, Nil) :+ api)
-    APIDocument(newAPIs.toMap)
-  }
+  private val apis: mutable.Map[String, RequestResponseContainer] =
+    mutable.Map()
 
-  def test(): Unit = {
-    var apiDocPart = APIDocument()
-    apiDocPart += API(Request(GET, "", ""), Response(""))
-  }
+  def append(request: Request, response: Response): Unit =
+    append(RequestResponseDocument(request, response))
+
+  def append(requestResponse: RequestResponseDocument): Unit =
+    append(requestResponse.request.path, requestResponse)
+  def append(category: String, requestResponse: RequestResponseDocument) =
+    this.put(
+      apis.getOrElse(category, RequestResponseContainer(category)) :+ requestResponse)
+
+  def put(apiContainer: RequestResponseContainer) =
+    apis.put(apiContainer.category, apiContainer)
 
 }
 
 object APIDocument {
-  def apply(): APIDocument = new APIDocument(Map())
+  def apply(): APIDocument = new APIDocument()
 }
