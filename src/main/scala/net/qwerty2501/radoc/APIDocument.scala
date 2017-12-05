@@ -10,9 +10,7 @@ object APIDocument {
       APIDocument.createAPIsMap(
         requestResponses
           .groupBy(that => that._1.method -> that._1.path)
-          .map { that =>
-            RequestResponseDocument(that._2)
-          }
+          .map(that => RequestResponseDocument(that._2))
           .toSeq))
 
   private def createAPIsMap(
