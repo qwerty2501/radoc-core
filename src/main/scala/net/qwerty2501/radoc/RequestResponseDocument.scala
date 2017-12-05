@@ -9,9 +9,6 @@ case class RequestResponseDocument(id: String,
       "requestResponses should be same method and paths.")
   }
 
-  def this(request: Request, response: Response) =
-    this(request, response, Map[String, String]())
-
   def this(request: Request,
            response: Response,
            extendArgs: Map[String, String]) =
@@ -20,6 +17,9 @@ case class RequestResponseDocument(id: String,
   def this(requestResponses: Seq[(Request, Response)],
            extendArgs: Map[String, String]) =
     this("", requestResponses, extendArgs)
+
+  def this(request: Request, response: Response) =
+    this(request, response, Map[String, String]())
 
   def this(requestResponses: Seq[(Request, Response)]) =
     this(requestResponses, Map[String, String]())

@@ -1,22 +1,27 @@
 package net.qwerty2501.radoc
 
-import scala.collection.mutable
-
 case class APIDocument(apis: Map[String, RequestResponseContainer]) {}
 
 object APIDocument {
 
-  def apply(requestResponses: Seq[(Request, Response)]): APIDocument =
-    createFromRequestResponseDocuments(requestResponses.map { that =>
-      RequestResponseDocument(that._1, that._2)
-    })
+  def createFromRequestResponsePairs(
+      requestResponses: Seq[(Request, Response)]): APIDocument =
+    new APIDocument(
+      APIDocument.createAPIsMap(
+        requestResponses
+          .groupBy(that => that._1.method -> that._1.path)
+          .map { that =>
+            RequestResponseDocument(that._2)
+          }
+          .toSeq))
 
+  private def createAPIsMap(
+      requestResponseDocuments: Seq[RequestResponseDocument]) =
+    requestResponseDocuments.groupBy(_.requestResponses.head._1.path).map {
+      that =>
+        that._1 -> RequestResponseContainer(that._2)
+    }
   def createFromRequestResponseDocuments(
-      requestResponseDocuments: Seq[RequestResponseDocument]): APIDocument = {
-    APIDocument(
-      requestResponseDocuments.groupBy(_.requestResponses.head._1.path).map {
-        that =>
-          that._1 -> RequestResponseContainer(that._2)
-      })
-  }
+      requestResponseDocuments: Seq[RequestResponseDocument]): APIDocument =
+    APIDocument(createAPIsMap(requestResponseDocuments))
 }

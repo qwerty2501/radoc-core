@@ -5,10 +5,10 @@ case class Version(major: Int, minor: Int, build: Int, revision: Int) {
     throw new IllegalArgumentException()
   }
 
-  def this() = this(0)
-  def this(major: Int) = this(major, 0)
-  def this(major: Int, minor: Int) = this(major, minor, 0)
   def this(major: Int, minor: Int, build: Int) = this(major, minor, build, 0)
+  def this(major: Int, minor: Int) = this(major, minor, 0)
+  def this(major: Int) = this(major, 0)
+  def this() = this(0)
 
   override def toString = major + "." + minor + "." + build + "." + revision
 }
