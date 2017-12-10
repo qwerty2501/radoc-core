@@ -30,7 +30,7 @@ case class RequestResponseDocument(id: String,
     val head = requestResponses.head
     requestResponses
       .filter(requestResponse =>
-        requestResponse._1.method == head._1.method && requestResponse._1.path == head._1.path)
+        requestResponse._1.method == head._1.method && requestResponse._1.path.displayPath == head._1.path.displayPath)
       .length == requestResponses.length
   }
 }
