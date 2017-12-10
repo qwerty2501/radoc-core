@@ -9,7 +9,7 @@ object APIDocument {
     new APIDocument(
       APIDocument.createAPIsMap(
         requestResponses
-          .groupBy(that => that._1.method -> that._1.path)
+          .groupBy(that => that._1.method -> that._1.path.displayPath)
           .map(that => RequestResponseDocument(that._2))
           .toSeq))
 
