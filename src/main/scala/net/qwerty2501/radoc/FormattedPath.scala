@@ -1,7 +1,7 @@
 package net.qwerty2501.radoc
 
-class FormattedPath private (override val displayPath: String,
-                             override val actualPath: String)
+private class FormattedPath private (override val displayPath: String,
+                                     override val actualPath: String)
     extends Path {
 
   def this(pathFormat: String, params: Any*) = {
@@ -22,7 +22,7 @@ class FormattedPath private (override val displayPath: String,
 
 }
 
-object FormattedPath {
+private object FormattedPath {
   def apply(pathFormat: String, params: Any*) =
     new FormattedPath(pathFormat, params: _*)
 }
