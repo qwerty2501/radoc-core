@@ -5,8 +5,8 @@ import org.scalatest._
 class APIDocumentSpec extends FlatSpec with Matchers {
   it should "can be create from request response pairs." in {
     val expectedPath = "/test/path"
-    val expectedMethod = Methods.GET
-    val expectedStatus = Statuses.OK
+    val expectedMethod = Method.GET
+    val expectedStatus = Status.OK
     val document = APIDocument.createFromRequestResponsePairs(
       Seq((Request.get(expectedPath) -> Response(expectedStatus))))
 
@@ -27,21 +27,21 @@ class APIDocumentSpec extends FlatSpec with Matchers {
   it should "be categorized by path and grouped by method and path" in {
     val category1Path = "category1/path"
     val expectedCategory1Group1Pairs =
-      Seq((Request.get(category1Path), Response(Statuses.OK)),
-          (Request.get(category1Path), Response(Statuses.OK)))
+      Seq((Request.get(category1Path), Response(Status.OK)),
+          (Request.get(category1Path), Response(Status.OK)))
     val expectedContent1 = "expectedContent1"
     val expectedContent2 = "expectedContent2"
     val expectedCategory1Group2Pairs =
       Seq(
-        (Request.post(category1Path, expectedContent1), Response(Statuses.OK)),
-        (Request.post(category1Path, expectedContent2), Response(Statuses.OK))
+        (Request.post(category1Path, expectedContent1), Response(Status.OK)),
+        (Request.post(category1Path, expectedContent2), Response(Status.OK))
       )
     val category2PathFormat = "category2/:id"
     val expectedCategory2Group1Pairs =
       Seq((Request.get(FormattedPath(category2PathFormat, 32)),
-           Response(Statuses.OK)),
+           Response(Status.OK)),
           (Request.get(FormattedPath(category2PathFormat, 22)),
-           Response(Statuses.OK)))
+           Response(Status.OK)))
 
     val document = APIDocument.createFromRequestResponsePairs(
       expectedCategory1Group1Pairs ++ expectedCategory1Group2Pairs ++ expectedCategory2Group1Pairs)
@@ -49,19 +49,19 @@ class APIDocumentSpec extends FlatSpec with Matchers {
     val category1 = document.apis(category1Path)
     category1.requestResponseDocuments.size should be(2)
     val category1Group1 = category1.requestResponseDocuments
-      .filter(_.requestResponses.head._1.method == Methods.GET)
+      .filter(_.requestResponses.head._1.method == Method.GET)
       .head
     category1Group1.requestResponses
-      .filter(_._1.method == Methods.GET)
+      .filter(_._1.method == Method.GET)
       .filter(_._1.path.actualPath == category1Path)
       .size should be(2)
 
     val category1Group2 = category1.requestResponseDocuments
-      .filter(_.requestResponses.head._1.method == Methods.POST)
+      .filter(_.requestResponses.head._1.method == Method.POST)
       .head
 
     category1Group2.requestResponses
-      .filter(_._1.method == Methods.POST)
+      .filter(_._1.method == Method.POST)
       .filter(_._1.path.actualPath == category1Path)
       .size should be(2)
 
@@ -70,7 +70,7 @@ class APIDocumentSpec extends FlatSpec with Matchers {
     category2.requestResponseDocuments.size should be(1)
 
     category2.requestResponseDocuments.head.requestResponses
-      .filter(_._1.method == Methods.GET)
+      .filter(_._1.method == Method.GET)
       .filter(_._1.path.displayPath == category2PathFormat)
       .size should be(2)
   }

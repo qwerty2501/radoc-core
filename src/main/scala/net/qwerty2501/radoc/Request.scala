@@ -1,6 +1,5 @@
 package net.qwerty2501.radoc
 
-
 case class Request(method: Method,
                    path: Path,
                    headers: HeaderMap,
@@ -20,20 +19,20 @@ case class Request(method: Method,
 
 object Request {
 
-  def get(path: Path): Request = apply(Methods.GET, path)
-  def get(path: Path, headers: HeaderMap) = apply(Methods.GET, path, headers)
-  def post(path: Path, content: String) = apply(Methods.POST, path, content)
+  def get(path: Path): Request = apply(Method.GET, path)
+  def get(path: Path, headers: HeaderMap) = apply(Method.GET, path, headers)
+  def post(path: Path, content: String) = apply(Method.POST, path, content)
   def post(path: Path, headers: HeaderMap, content: String) =
-    apply(Methods.POST, path, headers, content)
-  def put(path: Path, content: String) = apply(Methods.PUT, path, content)
+    apply(Method.POST, path, headers, content)
+  def put(path: Path, content: String) = apply(Method.PUT, path, content)
   def put(path: Path, headers: HeaderMap, content: String) =
-    apply(Methods.PUT, path, headers, content)
+    apply(Method.PUT, path, headers, content)
 
-  def delete(path: Path) = apply(Methods.DELETE, path)
+  def delete(path: Path) = apply(Method.DELETE, path)
   def delete(path: Path, headers: HeaderMap) =
-    apply(Methods.DELETE, path, headers)
+    apply(Method.DELETE, path, headers)
   def delete(path: Path, headers: HeaderMap, content: String) =
-    apply(Methods.DELETE, path, headers, content)
+    apply(Method.DELETE, path, headers, content)
 
   def apply(method: Method, path: Path, headers: HeaderMap) =
     new Request(method, path, headers)

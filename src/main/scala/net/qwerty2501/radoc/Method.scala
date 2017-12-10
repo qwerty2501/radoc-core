@@ -5,7 +5,7 @@ sealed trait Method {
 
 }
 
-object Methods {
+object Method {
   case object GET extends Method
   case object POST extends Method
   case object PUT extends Method

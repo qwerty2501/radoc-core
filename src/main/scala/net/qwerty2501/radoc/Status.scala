@@ -6,6 +6,6 @@ case class Status(statusCode: Int) {
 
 }
 
-object Statuses {
+object Status {
   final val OK = Status(200)
 }
