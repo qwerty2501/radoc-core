@@ -1,14 +1,20 @@
 package net.qwerty2501.radoc
 
-
-
 trait Path {
 
   val displayPath: String
   val actualPath: String
 
-  override def equals(o: scala.Any): Boolean =
-    o.isInstanceOf[Path] && this.displayPath == o.asInstanceOf[Path].displayPath
+  override def hashCode() = displayPath.hashCode
+  override def equals(o: Any) = {
+    o match {
+      case path: Path => path.displayPath == this.actualPath
+      case _          => false
+    }
+
+  }
+
+  override def toString = displayPath
 }
 
 object Path {
