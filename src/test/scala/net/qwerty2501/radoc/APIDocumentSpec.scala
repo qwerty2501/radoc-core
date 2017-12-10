@@ -36,10 +36,12 @@ class APIDocumentSpec extends FlatSpec with Matchers {
         (Request.post(category1Path, expectedContent1), Response(Statuses.OK)),
         (Request.post(category1Path, expectedContent2), Response(Statuses.OK))
       )
-    val category2Path = "category2/path"
+    val category2PathFormat = "category2/:id"
     val expectedCategory2Group1Pairs =
-      Seq((Request.get(category2Path), Response(Statuses.OK)),
-          (Request.get(category2Path), Response(Statuses.OK)))
+      Seq((Request.get(FormattedPath(category2PathFormat, 32)),
+           Response(Statuses.OK)),
+          (Request.get(FormattedPath(category2PathFormat, 22)),
+           Response(Statuses.OK)))
 
     val document = APIDocument.createFromRequestResponsePairs(
       expectedCategory1Group1Pairs ++ expectedCategory1Group2Pairs ++ expectedCategory2Group1Pairs)
@@ -63,13 +65,13 @@ class APIDocumentSpec extends FlatSpec with Matchers {
       .filter(_._1.path.actualPath == category1Path)
       .size should be(2)
 
-    val category2 = document.apis(category2Path)
+    val category2 = document.apis(category2PathFormat)
 
     category2.requestResponseDocuments.size should be(1)
 
     category2.requestResponseDocuments.head.requestResponses
       .filter(_._1.method == Methods.GET)
-      .filter(_._1.path.actualPath == category2Path)
+      .filter(_._1.path.displayPath == category2PathFormat)
       .size should be(2)
   }
 
