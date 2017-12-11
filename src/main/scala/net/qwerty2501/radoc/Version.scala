@@ -10,7 +10,10 @@ case class Version(major: Int, minor: Int, build: Int, revision: Int) {
   def this(major: Int) = this(major, 0)
   def this() = this(0)
 
-  override def toString = major + "." + minor + "." + build + "." + revision
+  override def toString = mkString('.')
+
+  def mkString(delimiter: Char): String =
+    "" + major + delimiter + minor + delimiter + build + delimiter + revision
 }
 
 object Version {
