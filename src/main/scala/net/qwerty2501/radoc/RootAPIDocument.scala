@@ -1,4 +1,3 @@
 package net.qwerty2501.radoc
 
-private case class RootAPIDocument(
-    apiCategories: Map[String, APIDocumentCategory])
+private case class RootAPIDocument(documents: Seq[RootAPIDocumentWithVersion])
