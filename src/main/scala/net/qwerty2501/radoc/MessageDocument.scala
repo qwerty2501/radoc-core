@@ -1,6 +1,6 @@
 package net.qwerty2501.radoc
 
-case class MessageDocument(name: String,
+case class MessageDocument(apiName: String,
                            request: Request,
                            response: Response)
 
