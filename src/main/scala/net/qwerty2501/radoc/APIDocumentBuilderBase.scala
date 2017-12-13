@@ -2,9 +2,10 @@ package net.qwerty2501.radoc
 
 import scala.collection.mutable
 
-class APIDocumentBuilderCore(private val apiClient: APIClient) {
+abstract class APIDocumentBuilderBase(private val apiClient: APIClient) {
   private var rootAPIDocument = RootAPIDocument(Map())
 
+  def getRootAPIDocument: RootAPIDocument = rootAPIDocument
   def request(req: Request,
               category: String,
               group: String,
@@ -117,8 +118,4 @@ class APIDocumentBuilderCore(private val apiClient: APIClient) {
 
     rootAPIDocument = RootAPIDocument(newRootAPIDocumentWithVersions.toMap)
   }
-}
-
-object APIDocumentBuilderCore {
-  def apply(apiClient: APIClient) = new APIDocumentBuilderCore(apiClient)
 }
