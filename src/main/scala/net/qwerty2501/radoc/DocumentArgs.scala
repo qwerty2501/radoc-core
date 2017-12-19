@@ -3,7 +3,7 @@ package net.qwerty2501.radoc
 case class DocumentArgs(category: String,
                         group: String,
                         description: String,
-                        apiName: String,
+                        messageName: String,
                         version: Version,
                         extendArgs: Map[String, String]) {
   def this(category: String,
