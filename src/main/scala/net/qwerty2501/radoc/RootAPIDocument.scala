@@ -1,3 +1,4 @@
 package net.qwerty2501.radoc
 
-case class RootAPIDocument(documents: Map[Version, RootAPIDocumentWithVersion])
+case class RootAPIDocument(title: String,
+                           documents: Map[Version, RootAPIDocumentWithVersion])

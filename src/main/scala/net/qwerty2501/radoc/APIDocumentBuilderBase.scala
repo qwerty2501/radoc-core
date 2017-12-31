@@ -3,8 +3,10 @@ package net.qwerty2501.radoc
 import scala.collection.mutable
 
 abstract class APIDocumentBuilderBase(private val apiClient: APIClient) {
-  private var rootAPIDocument = RootAPIDocument(Map())
+  private var rootAPIDocument = RootAPIDocument("", Map())
 
+  def setRootDocumentTitle(title: String): Unit =
+    rootAPIDocument = RootAPIDocument(title, rootAPIDocument.documents)
   def getRootAPIDocument: RootAPIDocument = rootAPIDocument
   def request(req: Request, documentArgs: DocumentArgs): Response = {
     val res = apiClient.request(req)
@@ -102,6 +104,7 @@ abstract class APIDocumentBuilderBase(private val apiClient: APIClient) {
     newRootAPIDocumentWithVersions.put(documentArgs.version,
                                        newRooAPIDocumentWithVersion)
 
-    rootAPIDocument = RootAPIDocument(newRootAPIDocumentWithVersions.toMap)
+    rootAPIDocument = RootAPIDocument(rootAPIDocument.title,
+                                      newRootAPIDocumentWithVersions.toMap)
   }
 }
