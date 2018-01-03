@@ -11,8 +11,9 @@ class APIDocumentGeneratorSpec extends FlatSpec with Matchers {
 
   it should "can generate api document" in {
     val rootAPIDocument = RootAPIDocument("", Map())
-    APIDocumentGeneratorInternal.generate(rootAPIDocument) should not be empty
-
+    APIDocumentGeneratorInternal.generate(
+      rootAPIDocument,
+      APIDocumentGenerateContext()) should not be empty
   }
 
   it should "can output document" in {

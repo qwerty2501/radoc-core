@@ -7,9 +7,13 @@ import scala.util.Try
 object APIDocumentGenerator {
 
   def generateDocument(rootAPIDocument: RootAPIDocument,
-                       outputPath: String): Unit = {
+                       outputPath: String): Unit =
+    generateDocument(rootAPIDocument, outputPath, APIDocumentGenerateContext())
+  def generateDocument(rootAPIDocument: RootAPIDocument,
+                       outputPath: String,
+                       context: APIDocumentGenerateContext): Unit = {
     APIDocumentGeneratorInternal.outputDocument(
-      APIDocumentGeneratorInternal.generate(rootAPIDocument),
+      APIDocumentGeneratorInternal.generate(rootAPIDocument, context),
       outputPath)
 
   }
@@ -25,9 +29,10 @@ private object APIDocumentGeneratorInternal {
     }
   }
 
-  def generate(rootAPIDocument: RootAPIDocument): String = {
+  def generate(rootAPIDocument: RootAPIDocument,
+               context: APIDocumentGenerateContext): String = {
     val engine = new TemplateEngine
-    engine.layout("net.qwerty2501.radoc/rootAPIDocument.ssp",
+    engine.layout(context.templatePath,
                   Map("rootAPIDocument" -> rootAPIDocument))
   }
 }
