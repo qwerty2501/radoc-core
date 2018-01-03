@@ -4,22 +4,22 @@ import java.io._
 import org.fusesource.scalate._
 
 import scala.util.Try
-object APIDocumentGenerator {
+object APIDocumentRenderer {
 
   def generateDocument(rootAPIDocument: RootAPIDocument,
                        outputPath: String): Unit =
-    generateDocument(rootAPIDocument, outputPath, APIDocumentGenerateContext())
+    generateDocument(rootAPIDocument, outputPath, APIDocumentRendererContext())
   def generateDocument(rootAPIDocument: RootAPIDocument,
                        outputPath: String,
-                       context: APIDocumentGenerateContext): Unit = {
-    APIDocumentGeneratorInternal.outputDocument(
-      APIDocumentGeneratorInternal.generate(rootAPIDocument, context),
+                       context: APIDocumentRendererContext): Unit = {
+    APIDocumentRendererInternal.outputDocument(
+      APIDocumentRendererInternal.generate(rootAPIDocument, context),
       outputPath)
   }
 
 }
 
-private object APIDocumentGeneratorInternal {
+private object APIDocumentRendererInternal {
   def outputDocument(document: String, outputPath: String): Unit = {
     val printWriter = new PrintWriter(new File(outputPath))
     printWriter.write(document)
@@ -28,7 +28,7 @@ private object APIDocumentGeneratorInternal {
   }
 
   def generate(rootAPIDocument: RootAPIDocument,
-               context: APIDocumentGenerateContext): String = {
+               context: APIDocumentRendererContext): String = {
 
     val engine = new TemplateEngine
     engine.layout(

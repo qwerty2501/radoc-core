@@ -1,6 +1,6 @@
 package net.qwerty2501.radoc
 
-case class APIDocumentGenerateContext(
+case class APIDocumentRendererContext(
     rootAPIDocumentTemplatePath: String,
     rootAPIDocumentWithVersionTemplatePath: String) {
   def this() =
@@ -8,6 +8,6 @@ case class APIDocumentGenerateContext(
          "rootAPIDocumentWithVersion.ssp")
 }
 
-object APIDocumentGenerateContext {
-  def apply() = new APIDocumentGenerateContext()
+object APIDocumentRendererContext {
+  def apply() = new APIDocumentRendererContext()
 }

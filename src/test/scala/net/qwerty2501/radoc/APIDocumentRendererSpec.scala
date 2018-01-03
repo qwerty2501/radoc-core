@@ -8,16 +8,15 @@ import org.scalatest._
 
 import scala.io.Source
 
-class APIDocumentGeneratorSpec extends FlatSpec with Matchers {
+class APIDocumentRendererSpec extends FlatSpec with Matchers {
 
-  it should "can generate only version 0.0.0.0 api document" in {
-    val filePath = "doc/samples/version0.0.0.0document.html"
+  private def getSampleDocument = {
     val builder = new APIDocumentBuilderMock()
     val sampleJson = """
-                      |{
-                      | "member":1,
-                      |}
-                    """.stripMargin
+                       |{
+                       | "member":1,
+                       |}
+                     """.stripMargin
     val sampleResponse = Response(
       Status.Ok,
       sampleJson
@@ -28,29 +27,34 @@ class APIDocumentGeneratorSpec extends FlatSpec with Matchers {
     )
     builder.append(Request.post("/sample/path", sampleJson), sampleResponse)
     builder.append(Request.get("/sample/path2"), Response(Status.Ok))
-
-    val path = Paths.get(filePath)
-    Files.deleteIfExists(path)
-    APIDocumentGenerator.generateDocument(builder.getRootAPIDocument, filePath)
-    Files.exists(path) should be(true)
-
+    builder.getRootAPIDocument
   }
-
   it should "can generate api document file" in {
     val filePath = "doc/samples/empty_document.html"
     val path = Paths.get(filePath)
     Files.deleteIfExists(path)
-    APIDocumentGenerator.generateDocument(
+    APIDocumentRenderer.generateDocument(
       RootAPIDocument("empty doc title", Map()),
       filePath)
     Files.exists(path) should be(true)
   }
 
-  it should "can generate api document" in {
-    val rootAPIDocument = RootAPIDocument("", Map())
+  it should "can generate only version 0.0.0.0 api document" in {
+    val filePath = "doc/samples/version0.0.0.0document.html"
 
-    APIDocumentGeneratorInternal
-      .generate(rootAPIDocument, APIDocumentGenerateContext()) should not be empty
+    val path = Paths.get(filePath)
+    Files.deleteIfExists(path)
+    APIDocumentRenderer.generateDocument(getSampleDocument, filePath)
+    Files.exists(path) should be(true)
+
+  }
+
+  it should "can generate api document" in {
+    val rootAPIDocument = getSampleDocument
+
+    APIDocumentRendererInternal
+      .generate(rootAPIDocument, APIDocumentRendererContext()) should not be empty
+
   }
 
   it should "can output document" in {
@@ -60,7 +64,7 @@ class APIDocumentGeneratorSpec extends FlatSpec with Matchers {
     val path = Paths.get(outputPath)
 
     Files.deleteIfExists(path)
-    APIDocumentGeneratorInternal.outputDocument(text, outputPath)
+    APIDocumentRendererInternal.outputDocument(text, outputPath)
     Files.exists(path) should be(true)
     val source = Source.fromFile(outputPath)
     val actualText = new String(source.toArray)
