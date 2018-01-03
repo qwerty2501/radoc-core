@@ -4,19 +4,12 @@ case class DocumentArgs(category: String,
                         group: String,
                         description: String,
                         messageName: String,
-                        version: Version,
-                        extendArgs: Map[String, String]) {
-  def this(category: String,
-           description: String,
-           version: Version,
-           extendArgs: Map[String, String]) =
-    this(category, "", description, "", version, extendArgs)
+                        version: Version) {
+  def this(category: String, description: String, version: Version) =
+    this(category, "", description, "", version)
 }
 
 object DocumentArgs {
-  def apply(category: String,
-            description: String,
-            version: Version,
-            extendArgs: Map[String, String]) =
-    new DocumentArgs(category, description, version, extendArgs)
+  def apply(category: String, description: String, version: Version) =
+    new DocumentArgs(category, description, version)
 }
