@@ -2,6 +2,7 @@ package net.qwerty2501.radoc
 import java.io._
 
 import scala.xml._
+import scala.io.Source
 object APIDocumentRenderer {
 
   def renderTo(rootAPIDocument: RootAPIDocument, outputPath: String): Unit =
@@ -32,13 +33,25 @@ private object APIDocumentRendererInternal {
 
   }
 
+  def getResourceText(path: String): String = {
+    Source.fromResource(path, this.getClass.getClassLoader).mkString
+  }
+
   def renderRootAPIDocument(rootAPIDocument: RootAPIDocument,
                             context: APIDocumentRendererContext): Elem = {
+    val bootstrapCSS = getResourceText("net.qwerty2501.radoc/bootstrap.min.css")
+    val bootstrapJS = getResourceText("net.qwerty2501.radoc/bootstrap.min.js")
     <html>
         <head>
           <meta charset="UTF-8"/>
           <title>{rootAPIDocument.title}</title>
           <style>
+            {bootstrapCSS}
+          </style>
+          <script>
+            {bootstrapJS}
+          </script>
+          <script>
             function displayTargetTo(parentId,targetId){{
             var template = document.getElementById(targetId);
             var targetElement = document.importNode(template.content,true);
@@ -47,7 +60,7 @@ private object APIDocumentRendererInternal {
             parent.appendChild(targetElement);
             }}
 
-          </style>
+          </script>
         </head>
         <body>
           {
