@@ -27,15 +27,15 @@ class APIDocumentRendererSpec extends FlatSpec with Matchers {
     )
     builder.append(Request.post("/sample/path", sampleJson), sampleResponse)
     builder.append(Request.get("/sample/path2"), Response(Status.Ok))
+    builder.setRootDocumentTitle("sample title")
     builder.getRootAPIDocument
   }
   it should "can generate api document file" in {
     val filePath = "doc/samples/empty_document.html"
     val path = Paths.get(filePath)
     Files.deleteIfExists(path)
-    APIDocumentRenderer.renderTo(
-      RootAPIDocument("empty doc title", Map()),
-      filePath)
+    APIDocumentRenderer.renderTo(RootAPIDocument("empty doc title", Map()),
+                                 filePath)
     Files.exists(path) should be(true)
   }
 
