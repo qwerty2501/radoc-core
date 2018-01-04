@@ -4,18 +4,18 @@ case class Response(status: Status,
                     headers: Map[String, String],
                     content: Content) {
   def this(status: Status) =
-    this(status, Map[String, String](), NothingContent())
+    this(status, Map[String, String](), Content())
 
   def this(status: Status, headers: Map[String, String]) =
-    this(status, headers, NothingContent())
+    this(status, headers, Content())
 
   def this(status: Status, text: String) =
-    this(status, Map[String, String](), TextContent(text))
+    this(status, Map[String, String](), Content(text))
 
   def this(status: Status, content: Content) =
     this(status, Map[String, String](), content)
   def this(status: Status, headers: Map[String, String], text: String) =
-    this(status, headers, TextContent(text))
+    this(status, headers, Content(text))
 
 }
 

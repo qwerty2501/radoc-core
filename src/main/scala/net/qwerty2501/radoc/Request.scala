@@ -6,19 +6,19 @@ case class Request(method: Method,
                    content: Content) {
 
   def this(method: Method, path: Path, headers: Map[String, String]) =
-    this(method, path, headers, NothingContent())
+    this(method, path, headers, Content())
 
   def this(method: Method, path: String, headers: Map[String, String]) =
     this(method, Path(path), headers)
 
   def this(method: Method, path: Path, text: String) =
-    this(method, path, Map[String, String](), TextContent(text))
+    this(method, path, Map[String, String](), Content(text))
 
   def this(method: Method, path: String, text: String) =
     this(method, Path(path), text)
 
   def this(method: Method, path: Path) =
-    this(method, path, Map[String, String](), NothingContent())
+    this(method, path, Map[String, String](), Content())
 
   def this(method: Method, path: String) =
     this(method, Path(path))
@@ -33,7 +33,7 @@ case class Request(method: Method,
            path: Path,
            headers: Map[String, String],
            text: String) =
-    this(method, path, headers, TextContent(text))
+    this(method, path, headers, Content(text))
 
   def this(method: Method,
            path: String,
