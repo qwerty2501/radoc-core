@@ -44,6 +44,7 @@ private object APIDocumentRendererInternal {
           <meta charset="UTF-8"/>
           <title>{rootAPIDocument.title}</title>
           <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous"/>
+
           <style>
             {
               """
@@ -124,6 +125,18 @@ private object APIDocumentRendererInternal {
           <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
           <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
           <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.bundle.min.js" integrity="sha384-VspmFJ2uqRrKr3en+IG0cIq1Cl/v/PHneDw6SQZYgrcr8ZZmZoQ3zhuGfMnSR/F2" crossorigin="anonymous"></script>
+          <script type="text/javascript">
+            {
+              """
+                |function renderContent(targetId,contentId){
+                | var target = document.getElementById(targetId);
+                | var content = document.importNode(document.getElementById(contentId).content,true);
+                | target.textContent = null;
+                | target.appendChild(content);
+                |}
+              """.stripMargin
+            }
+          </script>
         </body>
     </html>
   }
@@ -133,12 +146,15 @@ private object APIDocumentRendererInternal {
       context: APIDocumentRendererContext): Elem = {
 
     val apiCategories = rootAPIDocumentWithVersion.apiCategories
-    val categories = apiCategories.keys
+    val mainContentId = "main-content-" + rootAPIDocumentWithVersion.version.toString.hashCode
 
-    def renderGroupHeaders(groups: Seq[String]): Seq[Elem] = {
+    def generateTemplateId(categoryId: String, groupId: String) =
+      (categoryId + groupId).hashCode.toString
+    def renderGroupHeaders(groups: Seq[String],
+                           categoryId: String,
+                           targetId: String): Seq[Elem] = {
       groups.map { group =>
-        <li class="nav-item"><a href="" class="nav-link" ><span >{group}</span></a></li>
-
+        <li class="nav-item" onclick={"renderContent(\"" + targetId + "\",\"" + generateTemplateId(categoryId,group) +  "\")"} ><a href="javascript:void(0)" class="nav-link" ><span >{group}</span></a></li>
       }
     }
 
@@ -149,14 +165,14 @@ private object APIDocumentRendererInternal {
             <ul class="nav nav-pills flex-column">
 
               {if (apiCategories.exists(_._1 == "")) {
-              renderGroupHeaders(apiCategories.head._2.apiDocumentGroups.keys.toSeq)
+              renderGroupHeaders(apiCategories.head._2.apiDocumentGroups.keys.toSeq,apiCategories.head._1, mainContentId)
             }}
             </ul>
             {
             apiCategories.filter(_._1 != "").map{tAPICategory=>
               <p>{tAPICategory._1}</p>
                 <ul class="nav nav-pills flex-column">
-                  renderGroupHeaders(tAPICategory._2.apiDocumentGroups.keys.toSeq)
+                  renderGroupHeaders(tAPICategory._2.apiDocumentGroups.keys.toSeq,tAPICategory._1,mainContentId)
                 </ul>
             }
             }
@@ -164,9 +180,21 @@ private object APIDocumentRendererInternal {
 
           </nav>
 
-          <main class="col-sm-9 offset-sm-3 col-md-10 offset-md-2 pt-3">
+          <main  class="col-sm-9 offset-sm-3 col-md-10 offset-md-2 pt-3">
+            <div id={mainContentId} />
           </main>
         </div>
+        {
+        apiCategories.map{apiCategory=>
+          apiCategory._2.apiDocumentGroups.map{apiDocumentGroup=>
+            <template id={generateTemplateId(apiCategory._2.category,apiDocumentGroup._2.group)} >
+              <div>
+                {apiDocumentGroup._2.group}
+              </div>
+            </template>
+          }
+        }
+        }
 
       </div>
     }
