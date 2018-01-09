@@ -2,7 +2,7 @@ package net.qwerty2501.radoc
 
 import scala.collection.mutable
 
-abstract class APIDocumentBuilderBase(private val apiClient: APIClient) {
+class APIDocumentBuilder(private val apiClient: APIClient) {
   private var rootAPIDocument = RootAPIDocument("", Map())
 
   def setRootDocumentTitle(title: String): Unit =

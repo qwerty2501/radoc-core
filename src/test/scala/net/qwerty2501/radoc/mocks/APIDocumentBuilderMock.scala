@@ -1,6 +1,6 @@
 package net.qwerty2501.radoc.mocks
 
-import net.qwerty2501.radoc.APIDocumentBuilderBase
+import net.qwerty2501.radoc.APIDocumentBuilder
 
 class APIDocumentBuilderMock
-    extends APIDocumentBuilderBase(new APIClientMock()) {}
+    extends APIDocumentBuilder(new APIClientMock()) {}

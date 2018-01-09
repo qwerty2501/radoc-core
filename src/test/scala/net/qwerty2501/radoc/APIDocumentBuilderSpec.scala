@@ -3,7 +3,7 @@ package net.qwerty2501.radoc
 import net.qwerty2501.radoc.mocks._
 import org.scalatest._
 
-class APIDocumentBuilderBaseSpec extends FlatSpec with Matchers {
+class APIDocumentBuilderSpec extends FlatSpec with Matchers {
 
   it should "can add request response" in {
     val apiDocumentBuilder = new APIDocumentBuilderMock()
