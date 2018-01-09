@@ -44,81 +44,171 @@ private object APIDocumentRendererInternal {
           <meta charset="UTF-8"/>
           <title>{rootAPIDocument.title}</title>
           <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous"/>
-
           <style>
             {
               """
-                |.sidebar {
-                |  position: fixed;
-                |  top: 51px;
-                |  bottom: 0;
-                |  left: 0;
-                |  z-index: 1000;
-                |  padding: 20px;
+                |/*!
+                | * Start Bootstrap - Simple Sidebar (https://startbootstrap.com/template-overviews/simple-sidebar)
+                | * Copyright 2013-2017 Start Bootstrap
+                | * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-simple-sidebar/blob/master/LICENSE)
+                | */
+                |
+                |body {
                 |  overflow-x: hidden;
-                |  overflow-y: auto;
-                |  border-right: 1px solid #eee;
                 |}
                 |
-                |.sidebar {
+                |#wrapper {
                 |  padding-left: 0;
-                |  padding-right: 0;
+                |  -webkit-transition: all 0.5s ease;
+                |  -moz-transition: all 0.5s ease;
+                |  -o-transition: all 0.5s ease;
+                |  transition: all 0.5s ease;
                 |}
                 |
-                |.sidebar .nav {
-                |  margin-bottom: 20px;
+                |#wrapper.toggled {
+                |  padding-left: 250px;
                 |}
                 |
-                |.sidebar .nav-item {
+                |#sidebar-wrapper {
+                |  z-index: 1000;
+                |  position: fixed;
+                |  left: 250px;
+                |  width: 0;
+                |  height: 100%;
+                |  margin-left: -250px;
+                |  overflow-y: auto;
+                |  background: #000;
+                |  -webkit-transition: all 0.5s ease;
+                |  -moz-transition: all 0.5s ease;
+                |  -o-transition: all 0.5s ease;
+                |  transition: all 0.5s ease;
+                |}
+                |
+                |#wrapper.toggled #sidebar-wrapper {
+                |  width: 250px;
+                |}
+                |
+                |#page-content-wrapper {
                 |  width: 100%;
+                |  position: absolute;
+                |  padding: 15px;
                 |}
                 |
-                |.sidebar .nav-item + .nav-item {
-                |  margin-left: 0;
+                |#wrapper.toggled #page-content-wrapper {
+                |  position: absolute;
+                |  margin-right: -250px;
                 |}
                 |
-                |.sidebar .nav-link {
-                |  border-radius: 0;
+                |
+                |/* Sidebar Styles */
+                |
+                |.sidebar-nav {
+                |  position: absolute;
+                |  top: 0;
+                |  width: 250px;
+                |  margin: 0;
+                |  padding: 0;
+                |  list-style: none;
+                |}
+                |
+                |.sidebar-nav li {
+                |  text-indent: 20px;
+                |  line-height: 40px;
+                |}
+                |
+                |.sidebar-nav li a {
+                |  display: block;
+                |  text-decoration: none;
+                |  color: #999999;
+                |}
+                |
+                |.sidebar-nav li a:hover {
+                |  text-decoration: none;
+                |  color: #fff;
+                |  background: rgba(255, 255, 255, 0.2);
+                |}
+                |
+                |.sidebar-nav li a:active, .sidebar-nav li a:focus {
+                |  text-decoration: none;
+                |}
+                |
+                |.sidebar-nav>.sidebar-brand {
+                |  height: 65px;
+                |  font-size: 18px;
+                |  line-height: 60px;
+                |}
+                |
+                |.sidebar-nav>.sidebar-brand a {
+                |  color: #999999;
+                |}
+                |
+                |.sidebar-nav>.sidebar-brand a:hover {
+                |  color: #fff;
+                |  background: none;
+                |}
+                |
+                |@media(min-width:768px) {
+                |  #wrapper {
+                |    padding-left: 0;
+                |  }
+                |  #wrapper.toggled {
+                |    padding-left: 250px;
+                |  }
+                |  #sidebar-wrapper {
+                |    width: 0;
+                |  }
+                |  #wrapper.toggled #sidebar-wrapper {
+                |    width: 250px;
+                |  }
+                |  #page-content-wrapper {
+                |    padding: 20px;
+                |    position: relative;
+                |  }
+                |  #wrapper.toggled #page-content-wrapper {
+                |    position: relative;
+                |    margin-right: 0;
+                |  }
                 |}
                 |
               """.stripMargin
             }
           </style>
         </head>
-        <body>
 
+        <body>
           <nav class="navbar navbar-light bg-primary">
 
 
-            <button class="navbar-toggler float-sm-left" type="button" data-toggle="collapse" data-target="#sidebar" aria-controls="sidebar" aria-expanded="false">
-              <span class="navbar-toggler-icon"></span>
-            </button>
+          <button class="navbar-toggler float-sm-left" id="menu-toggle">
+            <span class="navbar-toggler-icon"></span>
+          </button>
 
-            <a class="navbar-brand mx-auto" href="#">{rootAPIDocument.title}</a>
+          <a class="navbar-brand mx-auto" href="#">
+            {rootAPIDocument.title}
+          </a>{if (rootAPIDocument.documents.size > 1) {
+            <select class="span2 navbar-btn float-sm-right">
+              {rootAPIDocument.documents.map { doc =>
+              <option value={doc._1.toString}>
+                {doc._1.toString}
+              </option>
+            }}
 
-            {
-              if (rootAPIDocument.documents.size > 1){
-                    <select class="span2 navbar-btn float-sm-right">
-                        {
-                        rootAPIDocument.documents.map{doc=>
-                          <option value={doc._1.toString}>{doc._1.toString}</option>
-                        }
-                        }
+            </select>
 
-                    </select>
+          }}
 
-              }
-            }
+        </nav>
 
-          </nav>
+        {
+          if (rootAPIDocument.documents.size == 1) {
+            renderRootAPIDocumentWithVersion(rootAPIDocument.documents.head._2, context)
+          } else if (rootAPIDocument.documents.size > 1) {
 
-          {
-            if (rootAPIDocument.documents.size == 1) {
-              renderRootAPIDocumentWithVersion(rootAPIDocument.documents.head._2,context)
-            } else if (rootAPIDocument.documents.size > 1) {
-
-            }
           }
+        }
+
+
+
 
 
           <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
@@ -134,6 +224,18 @@ private object APIDocumentRendererInternal {
                 | target.textContent = null;
                 | target.appendChild(content);
                 |}
+              """.stripMargin
+            }
+          </script>
+          <script type="text/javascript">
+            {
+              """
+                |
+                |$('#menu-toggle').click(function(e) {
+                |  e.preventDefault();
+                | $('#wrapper').toggleClass('toggled');
+                |});
+                |
               """.stripMargin
             }
           </script>
@@ -159,44 +261,51 @@ private object APIDocumentRendererInternal {
     }
 
     {
-      <div class="container-fluid">
-        <div class="row">
-          <nav id="sidebar" class="col-sm-3 col-md-2 hidden-xs-down sidebar collapse show bg-dark">
-            <ul class="nav nav-pills flex-column">
+      <div id="wrapper" class="toggled" >
 
-              {if (apiCategories.exists(_._1 == "")) {
-              renderGroupHeaders(apiCategories.head._2.apiDocumentGroups.keys.toSeq,apiCategories.head._1, mainContentId)
-            }}
-            </ul>
-            {
-            apiCategories.filter(_._1 != "").map{tAPICategory=>
-              <p>{tAPICategory._1}</p>
-                <ul class="nav nav-pills flex-column">
-                  renderGroupHeaders(tAPICategory._2.apiDocumentGroups.keys.toSeq,tAPICategory._1,mainContentId)
-                </ul>
-            }
-            }
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+          <ul class="sidebar-nav">
 
-
-          </nav>
-
-          <main  class="col-sm-9 offset-sm-3 col-md-10 offset-md-2 pt-3">
-            <div id={mainContentId} />
-          </main>
-        </div>
-        {
-        apiCategories.map{apiCategory=>
-          apiCategory._2.apiDocumentGroups.map{apiDocumentGroup=>
-            <template id={generateTemplateId(apiCategory._2.category,apiDocumentGroup._2.group)} >
-              <div>
-                {apiDocumentGroup._2.group}
-              </div>
-            </template>
+            {if (apiCategories.exists(_._1 == "")) {
+            renderGroupHeaders(apiCategories.head._2.apiDocumentGroups.keys.toSeq,apiCategories.head._1, mainContentId)
+          }}
+          </ul>
+          {
+          apiCategories.filter(_._1 != "").map{tAPICategory=>
+            <p>{tAPICategory._1}</p>
+              <ul class="sidebar-nav">
+                renderGroupHeaders(tAPICategory._2.apiDocumentGroups.keys.toSeq,tAPICategory._1,mainContentId)
+              </ul>
           }
-        }
-        }
+          }
+
+
+        </div>
+
+        <div id="page-content-wrapper">
+          <div class="container-fluid">
+            <main >
+              <div id={mainContentId} />
+            </main>
+
+            {
+            apiCategories.map{apiCategory=>
+              apiCategory._2.apiDocumentGroups.map{apiDocumentGroup=>
+                <template id={generateTemplateId(apiCategory._2.category,apiDocumentGroup._2.group)} >
+                  <div>
+                    {apiDocumentGroup._2.group}
+                  </div>
+                </template>
+              }
+            }
+            }
+
+          </div>
+        </div>
 
       </div>
+
     }
 
   }
