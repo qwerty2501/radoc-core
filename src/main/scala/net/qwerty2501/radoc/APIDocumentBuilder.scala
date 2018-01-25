@@ -47,7 +47,9 @@ class APIDocumentBuilder(private val apiClient: APIClient) {
   def append(req: Request, res: Response, documentArgs: DocumentArgs): Unit = {
     val apiGroup =
       if (documentArgs.group == "") req.path.displayPath else documentArgs.group
-    val messageName = documentArgs.messageName
+
+
+    val messageName ="[%d %s]%s".format(res.status.code,res.status.toString,documentArgs.messageName)
     val rootAPIDocumentWithVersion = rootAPIDocument.documents
       .getOrElse(documentArgs.version,
                  RootAPIDocumentWithVersion(documentArgs.version, Map()))
@@ -71,7 +73,7 @@ class APIDocumentBuilder(private val apiClient: APIClient) {
       apiDocument.method,
       apiDocument.path,
       apiDocument.messageDocuments :+
-        MessageDocument(documentArgs.messageName, req, res),
+        MessageDocument(messageName, req, res),
       if (documentArgs.description != "") documentArgs.description
       else apiDocument.description
     )
