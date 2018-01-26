@@ -27,11 +27,8 @@ private object APIDocumentRendererInternal {
 
   def render(rootAPIDocument: RootAPIDocument,
              context: APIDocumentRendererContext): String = {
-
-    "<!DOCTYPE html>\n" +
-      new PrettyPrinter(80, 2)
-        .format(renderRootAPIDocument(rootAPIDocument, context))
-
+    val doc = renderRootAPIDocument(rootAPIDocument, context)
+    dtd.DocType("html",dtd.SystemID("about:legacy-compat"),Nil).toString() + "\n" + Xhtml.toXhtml(doc)
   }
 
   def getResourceText(path: String): String = {
