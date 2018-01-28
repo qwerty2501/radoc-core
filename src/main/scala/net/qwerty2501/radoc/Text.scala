@@ -30,4 +30,5 @@ case class TextRenderingArguments(
     currentCategory: APIDocumentCategory,
     currentGroup: APIDocumentGroup,
     currentAPIDocument: APIDocument,
-    currentMessageDocument: MessageDocument)
+    currentMessageDocument: MessageDocument,
+    context: APIDocumentRendererContext)

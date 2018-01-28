@@ -28,7 +28,9 @@ private object APIDocumentRendererInternal {
   def render(rootAPIDocument: RootAPIDocument,
              context: APIDocumentRendererContext): String = {
     val doc = renderRootAPIDocument(rootAPIDocument, context)
-    dtd.DocType("html",dtd.SystemID("about:legacy-compat"),Nil).toString() + "\n" + Xhtml.toXhtml(doc)
+    dtd
+      .DocType("html", dtd.SystemID("about:legacy-compat"), Nil)
+      .toString() + "\n" + Xhtml.toXhtml(doc)
   }
 
   def getResourceText(path: String): String = {
@@ -199,7 +201,7 @@ private object APIDocumentRendererInternal {
 
         {
           if (rootAPIDocument.documents.size == 1) {
-            renderRootAPIDocumentWithVersion(rootAPIDocument.documents.head._2, context)
+            renderRootAPIDocumentWithVersion(rootAPIDocument.documents.head._2,rootAPIDocument, context)
           } else if (rootAPIDocument.documents.size > 1) {
 
           }
@@ -279,6 +281,7 @@ private object APIDocumentRendererInternal {
 
   def renderRootAPIDocumentWithVersion(
       rootAPIDocumentWithVersion: RootAPIDocumentWithVersion,
+      rootAPIDocument: RootAPIDocument,
       context: APIDocumentRendererContext): Elem = {
 
     val apiCategories = rootAPIDocumentWithVersion.apiCategories
@@ -328,7 +331,7 @@ private object APIDocumentRendererInternal {
             apiCategories.map{apiCategory=>
               apiCategory._2.apiDocumentGroups.map{apiDocumentGroup=>
                 <template id={generateTemplateId(apiCategory._2.category,apiDocumentGroup._2.group)} >
-                      {renderAPIGroupDocument(apiDocumentGroup._2)}
+                      {renderAPIGroupDocument(apiDocumentGroup._2,apiCategory._2,rootAPIDocumentWithVersion,rootAPIDocument,context)}
                 </template>
               }
             }
@@ -343,7 +346,12 @@ private object APIDocumentRendererInternal {
 
   }
 
-  def renderAPIGroupDocument(apiDocumentGroup: APIDocumentGroup): Elem = {
+  def renderAPIGroupDocument(
+      apiDocumentGroup: APIDocumentGroup,
+      currentCategory: APIDocumentCategory,
+      currentAPIDocumentWithVersion: RootAPIDocumentWithVersion,
+      rootAPIDocument: RootAPIDocument,
+      context: APIDocumentRendererContext): Elem = {
     <div>
       <div>
         <h1 class="bd-title">{apiDocumentGroup.group}</h1>
@@ -351,7 +359,7 @@ private object APIDocumentRendererInternal {
       <p>
         {
           apiDocumentGroup.apiDocuments.map { apiDocument =>
-            renderAPIDocument(apiDocument._2)
+            renderAPIDocument(apiDocument._2,apiDocumentGroup,currentCategory,currentAPIDocumentWithVersion,rootAPIDocument,context)
           }
         }
       </p>
@@ -359,13 +367,26 @@ private object APIDocumentRendererInternal {
     </div>
   }
 
-  def renderAPIDocument(apiDocument: APIDocument): Elem = {
+  def renderAPIDocument(
+      apiDocument: APIDocument,
+      currentGroup: APIDocumentGroup,
+      currentCategory: APIDocumentCategory,
+      currentAPIDocumentWithVersion: RootAPIDocumentWithVersion,
+      rootAPIDocument: RootAPIDocument,
+      context: APIDocumentRendererContext): Elem = {
     <p>
     <div>
       <h3><p>{apiDocument.method} {apiDocument.path.displayPath}</p></h3>
       <div>
         <p>
-          {apiDocument.description}
+          {apiDocument.description.render(TextRenderingArguments(
+          rootAPIDocument,
+          currentAPIDocumentWithVersion,
+          currentCategory,
+          currentGroup,
+          apiDocument,
+          apiDocument.messageDocuments.head,
+          context))}
         </p>
       </div>
       {apiDocument.messageDocuments.map(renderMessageDocument)}
