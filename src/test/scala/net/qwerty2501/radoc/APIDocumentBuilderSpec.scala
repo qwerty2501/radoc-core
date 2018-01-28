@@ -17,7 +17,7 @@ class APIDocumentBuilderSpec extends FlatSpec with Matchers {
       .apiDocuments(Method.Get, path.displayPath)
     apiDocument.description should be(Text())
 
-    val messageDocument = apiDocument.messageDocuments.head
+    val messageDocument = apiDocument.messageDocumentMap.head._2
 
     messageDocument.request.path.displayPath should be(path.displayPath)
     messageDocument.response should be(response)
@@ -37,7 +37,7 @@ class APIDocumentBuilderSpec extends FlatSpec with Matchers {
       .apiDocuments(Method.Get, path.displayPath)
     apiDocument.description should be(description)
 
-    val messageDocument = apiDocument.messageDocuments.head
+    val messageDocument = apiDocument.messageDocumentMap.head._2
 
     messageDocument.request.path.displayPath should be(path.displayPath)
     messageDocument.response should be(response)
@@ -67,16 +67,16 @@ class APIDocumentBuilderSpec extends FlatSpec with Matchers {
 
     val getAPIDocument =
       apiDocumentGroup.apiDocuments(Method.Get, targetPath.displayPath)
-    getAPIDocument.messageDocuments.length should be(1)
-    val getMessageDocument = getAPIDocument.messageDocuments.head
+    getAPIDocument.messageDocumentMap.values.size should be(1)
+    val getMessageDocument = getAPIDocument.messageDocumentMap.head._2
     getMessageDocument.request.method should be(Method.Get)
     getMessageDocument.request.path.displayPath should be(
       targetPath.displayPath)
 
     val postAPIDocument =
       apiDocumentGroup.apiDocuments(Method.Post, targetPath.displayPath)
-    postAPIDocument.messageDocuments.length should be(1)
-    val postMessageDocument = postAPIDocument.messageDocuments.head
+    postAPIDocument.messageDocumentMap.size should be(1)
+    val postMessageDocument = postAPIDocument.messageDocumentMap.head._2
     postMessageDocument.request.method should be(Method.Post)
     postMessageDocument.request.path.displayPath should be(
       targetPath.displayPath)
