@@ -3,22 +3,30 @@ package net.qwerty2501.radoc
 import scala.xml._
 
 trait Text {
-  def render(messageDocument:MessageDocument,rootAPIDocument:RootAPIDocument): Node
+  def render(args: TextRenderingArguments): Node
 }
 
-
-
-private case class NodeText(node:Node)extends Text{
-  override def render(messageDocument: MessageDocument, rootAPIDocument: RootAPIDocument): Node = node
+private case class NodeText(node: Node) extends Text {
+  override def render(args: TextRenderingArguments): Node = node
 }
 
-private case class CustomText(handler:(MessageDocument,RootAPIDocument)=>Node) extends Text{
-  override def render(messageDocument: MessageDocument, rootAPIDocument: RootAPIDocument): Node = handler(messageDocument,rootAPIDocument)
+private case class CustomText(handler: (TextRenderingArguments) => Node)
+    extends Text {
+  override def render(args: TextRenderingArguments): Node =
+    handler(args)
 }
 
-
-object Text{
-  def apply(text:String) :Text = NodeText(xml.Text(text))
-  def apply(node:Node):Text = NodeText(node)
-  def apply(handler:(MessageDocument,RootAPIDocument)=>Node):Text = CustomText(handler)
+object Text {
+  def apply(text: String): Text = NodeText(xml.Text(text))
+  def apply(node: Node): Text = NodeText(node)
+  def apply(handler: (TextRenderingArguments) => Node): Text =
+    CustomText(handler)
 }
+
+case class TextRenderingArguments(
+    rootAPIDocument: RootAPIDocument,
+    currentRootAPIDocumentWithVersion: RootAPIDocumentWithVersion,
+    currentCategory: APIDocumentCategory,
+    currentGroup: APIDocumentGroup,
+    currentAPIDocument: APIDocument,
+    currentMessageDocument: MessageDocument)
