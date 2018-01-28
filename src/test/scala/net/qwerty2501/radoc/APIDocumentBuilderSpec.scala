@@ -2,50 +2,50 @@ package net.qwerty2501.radoc
 
 import net.qwerty2501.radoc.mocks._
 import org.scalatest._
-
+import net.qwerty2501.radoc._
 class APIDocumentBuilderSpec extends FlatSpec with Matchers {
 
   it should "can add request response" in {
     val apiDocumentBuilder = new APIDocumentBuilderMock()
-    val path = "test/path"
+    val path = URLPath / "test" / "path"
     val response = apiDocumentBuilder.request(Request.get(path))
 
     val apiDocument = apiDocumentBuilder.getRootAPIDocument
       .documents(Version())
       .apiCategories("")
-      .apiDocumentGroups(path)
-      .apiDocuments(Method.Get, path)
+      .apiDocumentGroups(path.displayPath)
+      .apiDocuments(Method.Get, path.displayPath)
     apiDocument.description should be(Text())
 
     val messageDocument = apiDocument.messageDocuments.head
 
-    messageDocument.request.path.displayPath should be(path)
+    messageDocument.request.path.displayPath should be(path.displayPath)
     messageDocument.response should be(response)
 
   }
 
   it should "can add request response and description" in {
     val apiDocumentBuilder = new APIDocumentBuilderMock()
-    val path = "test/path"
+    val path = URLPath / "test/path"
     val description = Text("description")
     val response = apiDocumentBuilder.request(Request.get(path), description)
 
     val apiDocument = apiDocumentBuilder.getRootAPIDocument
       .documents(Version())
       .apiCategories("")
-      .apiDocumentGroups(path)
-      .apiDocuments(Method.Get, path)
+      .apiDocumentGroups(path.displayPath)
+      .apiDocuments(Method.Get, path.displayPath)
     apiDocument.description should be(description)
 
     val messageDocument = apiDocument.messageDocuments.head
 
-    messageDocument.request.path.displayPath should be(path)
+    messageDocument.request.path.displayPath should be(path.displayPath)
     messageDocument.response should be(response)
   }
 
   it should "can not add description twice to same api document" in {
     val apiDocumentBuilder = new APIDocumentBuilderMock()
-    val path = "test/path"
+    val path = URLPath / "test/path"
     val description = Text("description")
 
     intercept[IllegalStateException] {
@@ -57,25 +57,29 @@ class APIDocumentBuilderSpec extends FlatSpec with Matchers {
   it should "can add same path request but difference method" in {
 
     val apiDocumentBuilder = new APIDocumentBuilderMock()
-    val targetPath = "test/path"
+    val targetPath = URLPath / "test/path"
     apiDocumentBuilder.request(Request.get(targetPath))
     apiDocumentBuilder.request(Request.post(targetPath, Content()))
     val apiDocumentGroup = apiDocumentBuilder.getRootAPIDocument
       .documents(Version())
       .apiCategories("")
-      .apiDocumentGroups(targetPath)
+      .apiDocumentGroups(targetPath.displayPath)
 
-    val getAPIDocument = apiDocumentGroup.apiDocuments(Method.Get, targetPath)
+    val getAPIDocument =
+      apiDocumentGroup.apiDocuments(Method.Get, targetPath.displayPath)
     getAPIDocument.messageDocuments.length should be(1)
     val getMessageDocument = getAPIDocument.messageDocuments.head
     getMessageDocument.request.method should be(Method.Get)
-    getMessageDocument.request.path.displayPath should be(targetPath)
+    getMessageDocument.request.path.displayPath should be(
+      targetPath.displayPath)
 
-    val postAPIDocument = apiDocumentGroup.apiDocuments(Method.Post, targetPath)
+    val postAPIDocument =
+      apiDocumentGroup.apiDocuments(Method.Post, targetPath.displayPath)
     postAPIDocument.messageDocuments.length should be(1)
     val postMessageDocument = postAPIDocument.messageDocuments.head
     postMessageDocument.request.method should be(Method.Post)
-    postMessageDocument.request.path.displayPath should be(targetPath)
+    postMessageDocument.request.path.displayPath should be(
+      targetPath.displayPath)
 
   }
 }

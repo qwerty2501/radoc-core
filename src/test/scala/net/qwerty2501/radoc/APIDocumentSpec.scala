@@ -8,9 +8,11 @@ class APIDocumentSpec extends FlatSpec with Matchers {
     intercept[IllegalArgumentException] {
       APIDocument(
         Method.Get,
-        Path("test/path1"),
-        Seq(MessageDocument(Request.get("test/path1"), Response(Status.Ok)),
-            MessageDocument(Request.get("test/path2"), Response(Status.Ok))),
+        URLPath / "test/path1",
+        Seq(MessageDocument(Request.get(URLPath / "test/path1"),
+                            Response(Status.Ok)),
+            MessageDocument(Request.get(URLPath / "test/path2"),
+                            Response(Status.Ok))),
         Text("description")
       )
     }
@@ -20,10 +22,13 @@ class APIDocumentSpec extends FlatSpec with Matchers {
     intercept[IllegalArgumentException] {
       APIDocument(
         Method.Get,
-        Path("test/path"),
-        Seq(MessageDocument(Request.post("test/path", Content()),
-                            Response(Status.Ok)),
-            MessageDocument(Request.get("test/path"), Response(Status.Ok))),
+        URLPath / "test/path",
+        Seq(
+          MessageDocument(Request.post(URLPath / "test/path", Content()),
+                          Response(Status.Ok)),
+          MessageDocument(Request.get(URLPath / "test/path"),
+                          Response(Status.Ok))
+        ),
         Text("description")
       )
     }

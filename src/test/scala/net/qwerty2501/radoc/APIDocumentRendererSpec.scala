@@ -22,11 +22,12 @@ class APIDocumentRendererSpec extends FlatSpec with Matchers {
       sampleJson
     )
     builder.append(
-      Request.get("/sample/path"),
+      Request.get(URLPath / "sample/path"),
       sampleResponse
     )
-    builder.append(Request.post("/sample/path", sampleJson), sampleResponse)
-    builder.append(Request.get("/sample/path2"), Response(Status.Ok))
+    builder.append(Request.post(URLPath / "sample/path", sampleJson),
+                   sampleResponse)
+    builder.append(Request.get(URLPath / "sample/path2"), Response(Status.Ok))
     builder.setRootDocumentTitle("sample title")
     builder.getRootAPIDocument
   }
@@ -37,11 +38,11 @@ class APIDocumentRendererSpec extends FlatSpec with Matchers {
     val path = Paths.get(filePath)
     Files.deleteIfExists(path)
     val builder = new APIDocumentBuilderMock()
-    builder.request(Request.get("test/path"),
+    builder.request(Request.get(URLPath / "test/path"),
                     "",
                     Text("v1"),
                     Version(1, 0, 0, 0))
-    builder.request(Request.get("test/path"),
+    builder.request(Request.get(URLPath / "test/path"),
                     "",
                     Text("v2"),
                     Version(2, 0, 0, 0))

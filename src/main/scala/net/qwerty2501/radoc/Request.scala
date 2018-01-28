@@ -1,126 +1,79 @@
 package net.qwerty2501.radoc
 
 case class Request(method: Method,
-                   path: Path,
+                   path: URLPath,
                    headers: Map[String, String],
                    content: Content)
     extends Message {
 
-  def this(method: Method, path: Path, headers: Map[String, String]) =
+  def this(method: Method, path: URLPath, headers: Map[String, String]) =
     this(method, path, headers, Content())
 
-  def this(method: Method, path: String, headers: Map[String, String]) =
-    this(method, Path(path), headers)
-
-  def this(method: Method, path: Path, text: String) =
+  def this(method: Method, path: URLPath, text: String) =
     this(method, path, Map[String, String](), Content(text))
 
-  def this(method: Method, path: String, text: String) =
-    this(method, Path(path), text)
-
-  def this(method: Method, path: Path) =
+  def this(method: Method, path: URLPath) =
     this(method, path, Map[String, String](), Content())
 
-  def this(method: Method, path: String) =
-    this(method, Path(path))
-
-  def this(method: Method, path: Path, content: Content) =
+  def this(method: Method, path: URLPath, content: Content) =
     this(method, path, Map[String, String](), content)
 
-  def this(method: Method, path: String, content: Content) =
-    this(method, Path(path), content)
-
   def this(method: Method,
-           path: Path,
+           path: URLPath,
            headers: Map[String, String],
            text: String) =
     this(method, path, headers, Content(text))
-
-  def this(method: Method,
-           path: String,
-           headers: Map[String, String],
-           text: String) =
-    this(method, Path(path), headers, text)
-
-  def this(method: Method,
-           path: String,
-           headers: Map[String, String],
-           content: Content) =
-    this(method, Path(path), headers, content)
 
 }
 
 object Request {
 
-  def get(path: Path): Request = apply(Method.Get, path)
-  def get(path: String): Request = apply(Method.Get, path)
-  def get(path: Path, headers: Map[String, String]) =
-    apply(Method.Get, path, headers)
-  def get(path: String, headers: Map[String, String]) =
+  def get(path: URLPath): Request = apply(Method.Get, path)
+
+  def get(path: URLPath, headers: Map[String, String]) =
     apply(Method.Get, path, headers)
 
-  def post(path: Path, content: String) = apply(Method.Post, path, content)
-  def post(path: String, content: String) = apply(Method.Post, path, content)
-  def post(path: Path, content: Content) = apply(Method.Post, path, content)
-  def post(path: String, content: Content) = apply(Method.Post, path, content)
-  def post(path: Path, headers: Map[String, String], content: String) =
-    apply(Method.Post, path, headers, content)
-  def post(path: String, headers: Map[String, String], content: String) =
+  def post(path: URLPath, content: String) = apply(Method.Post, path, content)
+
+  def post(path: URLPath, content: Content) = apply(Method.Post, path, content)
+
+  def post(path: URLPath, headers: Map[String, String], content: String) =
     apply(Method.Post, path, headers, content)
 
-  def put(path: Path, content: String) = apply(Method.Put, path, content)
-  def put(path: String, content: String) = apply(Method.Put, path, content)
-  def put(path: Path, content: Content) = apply(Method.Put, path, content)
-  def put(path: String, content: Content) = apply(Method.Put, path, content)
-  def put(path: Path, headers: Map[String, String], content: String) =
-    apply(Method.Put, path, headers, content)
-  def put(path: String, headers: Map[String, String], content: String) =
+  def put(path: URLPath, content: String) = apply(Method.Put, path, content)
+
+  def put(path: URLPath, content: Content) = apply(Method.Put, path, content)
+
+  def put(path: URLPath, headers: Map[String, String], content: String) =
     apply(Method.Put, path, headers, content)
 
-  def delete(path: Path) = apply(Method.Delete, path)
-  def delete(path: String) = apply(Method.Delete, path)
-  def delete(path: Path, headers: Map[String, String]) =
+  def delete(path: URLPath) = apply(Method.Delete, path)
+
+  def delete(path: URLPath, headers: Map[String, String]) =
     apply(Method.Delete, path, headers)
-  def delete(path: String, headers: Map[String, String]) =
-    apply(Method.Delete, path, headers)
-  def delete(path: Path, headers: Map[String, String], content: String) =
-    apply(Method.Delete, path, headers, content)
-  def delete(path: String, headers: Map[String, String], content: String) =
-    apply(Method.Delete, path, headers, content)
-  def delete(path: Path, headers: Map[String, String], content: Content) =
-    apply(Method.Delete, path, headers, content)
-  def delete(path: String, headers: Map[String, String], content: Content) =
+
+  def delete(path: URLPath, headers: Map[String, String], content: String) =
     apply(Method.Delete, path, headers, content)
 
-  def apply(method: Method, path: Path, headers: Map[String, String]) =
+  def delete(path: URLPath, headers: Map[String, String], content: Content) =
+    apply(Method.Delete, path, headers, content)
+
+  def apply(method: Method, path: URLPath, headers: Map[String, String]) =
     new Request(method, path, headers)
-  def apply(method: Method, path: String, headers: Map[String, String]) =
-    new Request(method, path, headers)
-  def apply(method: Method, path: Path, text: String) =
+
+  def apply(method: Method, path: URLPath, text: String) =
     new Request(method, path, TextContent(text))
-  def apply(method: Method, path: String, text: String) =
-    new Request(method, path, TextContent(text))
-  def apply(method: Method, path: Path) =
+
+  def apply(method: Method, path: URLPath) =
     new Request(method, path)
-  def apply(method: Method, path: String) =
-    new Request(method, path)
-  def apply(method: Method, path: Path, content: Content) =
+
+  def apply(method: Method, path: URLPath, content: Content) =
     new Request(method, path, content)
-  def apply(method: Method, path: String, content: Content) =
-    new Request(method, path, content)
+
   def apply(method: Method,
-            path: Path,
-            headers: Map[String, String],
-            text: String) =
-    new Request(method, path, headers, TextContent(text))
-  def apply(method: Method,
-            path: String,
+            path: URLPath,
             headers: Map[String, String],
             text: String) =
     new Request(method, path, headers, TextContent(text))
 
-  def apply(method: Method,
-            path: String,
-            headers: Map[String, String],
-            content: Content) = new Request(method, path, headers, content)
 }
