@@ -20,7 +20,7 @@ case class PathOfURLPath(override val displayPath: String,
                   this.actualPath + "/" + path,
                   this.pathParameters)
   def /(parameterPath: Parameter): PathOfURLPath =
-    PathOfURLPath(this.displayPath + "/" + parameterPath.name,
+    PathOfURLPath(this.displayPath + "/:" + parameterPath.name,
                   this.actualPath + "/" + parameterPath.value,
                   this.pathParameters :+ parameterPath)
 
