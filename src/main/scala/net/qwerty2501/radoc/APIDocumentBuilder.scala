@@ -60,11 +60,22 @@ class APIDocumentBuilder(private val apiClient: APIClient) {
         .getOrElse(documentArgs.category,
                    APIDocumentCategory(documentArgs.category, Map()))
     val apiDocumentGroup = apiDocumentCategory.apiDocumentGroups
-      .getOrElse(apiGroup, APIDocumentGroup(apiGroup, Map()))
+      .getOrElse(apiGroup,
+                 APIDocumentGroup(apiGroup,
+                                  Map(),
+                                  apiDocumentCategory.category,
+                                  rootAPIDocumentWithVersion.version))
 
     val groupKey = (req.method, req.path.displayPath)
     val apiDocument = apiDocumentGroup.apiDocuments
-      .getOrElse(groupKey, APIDocument(req.method, req.path, Seq(), Text()))
+      .getOrElse(groupKey,
+                 APIDocument(req.method,
+                             req.path,
+                             Map(),
+                             Text(),
+                             apiDocumentGroup.group,
+                             apiDocumentCategory.category,
+                             rootAPIDocumentWithVersion.version))
 
     if (apiDocument.description != Text() && documentArgs.description != Text()) {
       throw new IllegalStateException("description is already set.")
@@ -73,16 +84,22 @@ class APIDocumentBuilder(private val apiClient: APIClient) {
     val newAPIDocument = APIDocument(
       apiDocument.method,
       apiDocument.path,
-      apiDocument.messageDocuments :+
-        MessageDocument(messageName, req, res),
+      apiDocument.messageDocumentMap + (messageName ->
+        MessageDocument(messageName, req, res)),
       if (documentArgs.description != Text()) documentArgs.description
-      else apiDocument.description
+      else apiDocument.description,
+      apiDocumentGroup.group,
+      apiDocumentCategory.category,
+      rootAPIDocumentWithVersion.version
     )
 
     val apiDocuments = mutable.Map(apiDocumentGroup.apiDocuments.toSeq: _*)
     apiDocuments.put(groupKey, newAPIDocument)
     val newAPIDocumentGroup =
-      APIDocumentGroup(apiDocumentGroup.group, apiDocuments.toMap)
+      APIDocumentGroup(apiDocumentGroup.group,
+                       apiDocuments.toMap,
+                       apiDocumentCategory.category,
+                       rootAPIDocumentWithVersion.version)
 
     val apiDocumentGroups =
       mutable.Map(apiDocumentCategory.apiDocumentGroups.toSeq: _*)
