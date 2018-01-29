@@ -173,6 +173,7 @@ private object APIDocumentRendererInternal {
               """.stripMargin
             }
           </style>
+
         </head>
 
         <body>
@@ -378,7 +379,19 @@ private object APIDocumentRendererInternal {
       context: APIDocumentRendererContext): Elem = {
     <p>
     <div >
-      <h3><p>{apiDocument.method} {apiDocument.path.displayPath}</p></h3>
+
+      <p>
+        <kbd class={apiDocument.method match{
+          case Method.Get=>"bg-success"
+          case Method.Post => "bg-primary"
+          case Method.Put => "bg-warning"
+          case Method.Delete => "bg-danger"
+          case _ =>"bg-secondary"
+        }}> <span class="font-weight-bold" >{apiDocument.method}</span></kbd>
+      </p>
+      <p>
+        <kbd><span class="font-weight-bold" >{apiDocument.path.displayPath}</span></kbd>
+      </p>
       <div>
         <p>
           {apiDocument.description.render(TextRenderingArguments(
