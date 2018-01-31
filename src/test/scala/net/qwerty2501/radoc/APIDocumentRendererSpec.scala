@@ -71,7 +71,7 @@ class APIDocumentRendererSpec extends FlatSpec with Matchers {
         )),
       Response(Status.Ok))
     builder.setRootDocumentTitle("sample title")
-    builder.getRootAPIDocument
+    builder.buildRootAPIDocument
   }
 
   it should "can generate api document with versions file" in {
@@ -89,7 +89,7 @@ class APIDocumentRendererSpec extends FlatSpec with Matchers {
                     Text("v2"),
                     Version(2, 0, 0))
     builder.setRootDocumentTitle("version title")
-    APIDocumentRenderer.renderTo(builder.getRootAPIDocument, filePath)
+    APIDocumentRenderer.renderTo(builder.buildRootAPIDocument, filePath)
     Files.exists(path) should be(true)
   }
   it should "can generate api document file" in {

@@ -7,7 +7,7 @@ class APIDocumentBuilder(private val apiClient: APIClient) {
 
   def setRootDocumentTitle(title: String): Unit =
     rootAPIDocument = RootAPIDocument(title, rootAPIDocument.documents)
-  def getRootAPIDocument: RootAPIDocument = rootAPIDocument
+  def buildRootAPIDocument: RootAPIDocument = rootAPIDocument
   def request(req: Request, documentArgs: DocumentArgs): Response = {
     val res = apiClient.request(req)
     append(req, res, documentArgs)
