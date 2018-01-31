@@ -291,7 +291,7 @@ private object APIDocumentRendererInternal {
 
     val apiCategories = rootAPIDocumentWithVersion.apiCategories
     val mainContentId =
-      InternalLink.mainContentId(rootAPIDocumentWithVersion.version)
+      Link.mainContentId(rootAPIDocumentWithVersion.version)
 
     def generateTemplateId(categoryId: String, groupId: String) =
       (categoryId + groupId).hashCode.toString
@@ -335,7 +335,7 @@ private object APIDocumentRendererInternal {
             {
             apiCategories.map{apiCategory=>
               apiCategory._2.apiDocumentGroups.map{apiDocumentGroup=>
-                <template id={ InternalLink.templateId(apiCategory._2.category,apiDocumentGroup._2.group) } >
+                <template id={ Link.templateId(apiCategory._2.category,apiDocumentGroup._2.group) } >
                       {renderAPIGroupDocument(apiDocumentGroup._2,apiCategory._2,rootAPIDocumentWithVersion,rootAPIDocument,context)}
                 </template>
               }
@@ -530,7 +530,7 @@ private object APIDocumentRendererInternal {
 
   private def tabId(apiDocument: APIDocument,
                     messageDocument: MessageDocument): String = {
-    InternalLink.fragmentId(apiDocument) + messageDocument.messageName.hashCode
+    Link.fragmentId(apiDocument) + messageDocument.messageName.hashCode
   }
 
 }
