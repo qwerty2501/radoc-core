@@ -3,16 +3,17 @@ package net.qwerty2501.radoc
 import scala.xml._
 
 trait Text {
-  private[radoc] def render(args: TextRenderingArguments): Node
+  private[radoc] def renderHtml(args: TextRenderingArguments): Node
 }
 
 private case class NodeText(node: Node) extends Text {
-  private[radoc] override def render(args: TextRenderingArguments): Node = node
+  private[radoc] override def renderHtml(args: TextRenderingArguments): Node =
+    node
 }
 
 private case class CustomText(handler: (TextRenderingArguments) => Node)
     extends Text {
-  private[radoc] override def render(args: TextRenderingArguments): Node =
+  private[radoc] override def renderHtml(args: TextRenderingArguments): Node =
     handler(args)
 }
 

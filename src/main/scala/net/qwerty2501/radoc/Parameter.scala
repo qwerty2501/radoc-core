@@ -12,10 +12,13 @@ case class Parameter(name: String,
     this(name, value, typeNames.mkString(" | "), description)
 
   def this(name: String, value: Any, valueType: Class[_], description: Text) =
-    this(name, value, valueType.toString, description)
+    this(name, value, valueType.getSimpleName, description)
 
   def this(name: String, value: Any, description: Text) =
-    this(name, value, value.getClass, description)
+    this(name,
+         value,
+         if (value != null) value.getClass.getSimpleName else "null",
+         description)
 
 }
 

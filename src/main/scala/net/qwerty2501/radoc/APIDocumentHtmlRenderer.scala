@@ -186,7 +186,7 @@ private object APIDocumentHtmlRenderer {
         </p>
         <div>
           <p>
-            {apiDocument.description.render(TextRenderingArguments(
+            {apiDocument.description.renderHtml(TextRenderingArguments(
             rootAPIDocument,
             currentAPIDocumentWithVersion,
             currentCategory,
@@ -270,19 +270,17 @@ private object APIDocumentHtmlRenderer {
           <table class="table table-sm table-striped table-bordered">
             <thead class="thead-inverse">
               <tr>
-                <th scope="col" >name</th>
-                <th scope="col" >value</th>
-                <th scope="col" >type</th>
-                <th scope="col" >description</th>
+                <th scope="col" >Field</th>
+                <th scope="col" >Type</th>
+                <th scope="col" >Description</th>
               </tr>
             </thead>
             {
             parameters.map { parameter =>
               <tr >
                 <td scope="row" style="width:15%;">{parameter.name}</td>
-                <td style="width:35%;" >{parameter.value.toString}</td>
                 <td style="width:15%;" >{parameter.typeName}</td>
-                <td style="width:35%;" >{parameter.description.render(
+                <td style="width:70%;" >{parameter.description.renderHtml(
                   TextRenderingArguments(
                     rootAPIDocument,currentAPIDocumentWithVersion,currentCategory,
                     currentGroup,currentAPIDocument,messageDocument,context
