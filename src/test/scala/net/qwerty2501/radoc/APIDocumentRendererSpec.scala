@@ -89,14 +89,14 @@ class APIDocumentRendererSpec extends FlatSpec with Matchers {
                     Text("v2"),
                     Version(2, 0, 0))
     builder.setRootDocumentTitle("version title")
-    APIDocumentRenderer.renderHTMLTo(builder.buildRootAPIDocument, filePath)
+    APIDocumentRenderer.renderHtmlTo(builder.buildRootAPIDocument, filePath)
     Files.exists(path) should be(true)
   }
   it should "can generate api document file" in {
     val filePath = "doc/samples/empty_document.html"
     val path = Paths.get(filePath)
     Files.deleteIfExists(path)
-    APIDocumentRenderer.renderHTMLTo(RootAPIDocument("empty doc title", Map()),
+    APIDocumentRenderer.renderHtmlTo(RootAPIDocument("empty doc title", Map()),
                                      filePath)
     Files.exists(path) should be(true)
   }
@@ -106,7 +106,7 @@ class APIDocumentRendererSpec extends FlatSpec with Matchers {
 
     val path = Paths.get(filePath)
     Files.deleteIfExists(path)
-    APIDocumentRenderer.renderHTMLTo(getSampleDocument, filePath)
+    APIDocumentRenderer.renderHtmlTo(getSampleDocument, filePath)
     Files.exists(path) should be(true)
 
   }
@@ -114,7 +114,7 @@ class APIDocumentRendererSpec extends FlatSpec with Matchers {
   it should "can generate api document" in {
     val rootAPIDocument = getSampleDocument
 
-    APIDocumentRenderer
+    APIDocumentHtmlRenderer
       .render(rootAPIDocument, APIDocumentRendererContext()) should not be empty
 
   }
