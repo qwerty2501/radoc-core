@@ -272,7 +272,7 @@ private object APIDocumentHtmlRenderer {
             {
             parameters.map { parameter =>
               <tr >
-                <td scope="row" style="width:15%;">{parameter.field}</td>
+                <td scope="row" style="width:15%;">{if(parameter.color != Color()) <span style={"color:" + parameter.color.toString() } >{parameter.field}</span>  else  parameter.field}</td>
                 <td style="width:15%;" >{parameter.typeName}</td>
                 <td style="width:70%;" >{parameter.description.renderHtml(
                   TextRenderingArguments(
