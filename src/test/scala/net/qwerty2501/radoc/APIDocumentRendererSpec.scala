@@ -25,38 +25,38 @@ class APIDocumentRendererSpec extends FlatSpec with Matchers {
     )
     builder.append(
       Request.get(
-        URLPath / "sample/path" / Parameter("id", 32, Text("id description"))
+        UrlPath / "sample/path" / Parameter("id", 32, Text("id description"))
           :? Parameter("name", "john", Text("name description"))),
       sampleResponse
     )
     builder.append(
       Request.get(
-        URLPath / "sample/path" / Parameter("id", 32, Text("id description"))
+        UrlPath / "sample/path" / Parameter("id", 32, Text("id description"))
           :? Parameter("name", "j2", Text("name description"))),
       sampleResponse
     )
     builder.append(
       Request.post(
-        URLPath / "sample/path" / Parameter("id", 44, Text("id description"))
+        UrlPath / "sample/path" / Parameter("id", 44, Text("id description"))
           :? Parameter("name", "john", Text("name description")),
         sampleJson),
       sampleResponse
     )
     builder.append(
       Request.put(
-        URLPath / "sample/path" / Parameter("id", 32, Text("id description"))
+        UrlPath / "sample/path" / Parameter("id", 32, Text("id description"))
           :? Parameter("name", "john", Text("name description")),
         sampleJson),
       sampleResponse
     )
     builder.append(
       Request.delete(
-        URLPath / "sample/path" / Parameter("id", 32, Text("id description"))
+        UrlPath / "sample/path" / Parameter("id", 32, Text("id description"))
           :? Parameter("name", "john", Text("name description"))),
       sampleResponse
     )
     builder.append(
-      Request.post(URLPath / "sample/path",
+      Request.post(UrlPath / "sample/path",
                    Map(
                      ("Content-Type",
                       HeaderParameter("application/json", Text("content type")))
@@ -65,7 +65,7 @@ class APIDocumentRendererSpec extends FlatSpec with Matchers {
       sampleResponse)
     builder.append(
       Request.get(
-        URLPath / "sample/path2",
+        UrlPath / "sample/path2",
         Map(
           ("Accept-Language", HeaderParameter("en-US", Text("accept language")))
         )),
@@ -80,11 +80,11 @@ class APIDocumentRendererSpec extends FlatSpec with Matchers {
     val path = Paths.get(filePath)
     Files.deleteIfExists(path)
     val builder = new APIDocumentBuilderMock()
-    builder.request(Request.get(URLPath / "test/path"),
+    builder.request(Request.get(UrlPath / "test/path"),
                     "",
                     Text("v1"),
                     Version(1, 0, 0))
-    builder.request(Request.get(URLPath / "test/path"),
+    builder.request(Request.get(UrlPath / "test/path"),
                     "",
                     Text("v2"),
                     Version(2, 0, 0))

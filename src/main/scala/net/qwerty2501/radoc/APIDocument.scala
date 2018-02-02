@@ -1,7 +1,7 @@
 package net.qwerty2501.radoc
 
 case class APIDocument(method: Method,
-                       path: URLPath,
+                       path: UrlPath,
                        messageDocumentMap: Map[String, MessageDocument],
                        description: Text,
                        group: String,
@@ -16,9 +16,9 @@ case class APIDocument(method: Method,
   }
 
   private def checkRequestResponses(
-      method: Method,
-      path: URLPath,
-      requestResponses: Seq[MessageDocument]): Boolean = {
+                                     method: Method,
+                                     path: UrlPath,
+                                     requestResponses: Seq[MessageDocument]): Boolean = {
     if (requestResponses.isEmpty) { return true }
     val head = requestResponses.head
     requestResponses
