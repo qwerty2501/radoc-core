@@ -2,7 +2,7 @@ package net.qwerty2501.radoc
 
 import org.scalatest._
 
-class URLPathSpec extends FlatSpec with Matchers {
+class UrlPathSpec extends FlatSpec with Matchers {
 
   it should "parameter path" in {
     val parameter = Parameter("id", 33, Text("id description"))
@@ -10,7 +10,7 @@ class URLPathSpec extends FlatSpec with Matchers {
       Parameter("name", "value", Text("name description"))
     val queryParameter2 =
       Parameter("name2", "value2", Text("name description"))
-    val urlPath = URLPath / "test/path" / parameter :? queryParameter & queryParameter2
+    val urlPath = UrlPath / "test/path" / parameter :? queryParameter & queryParameter2
 
     urlPath.displayPath should be("/test/path/:id")
     urlPath.actualPath should be("/test/path/33?name=value&name2=value2")
