@@ -31,8 +31,6 @@ private object ApiDocumentHtmlRenderer {
         <title>{rootApiDocument.title}</title>
         {renderCss("bootstrap.min.css")}
         {renderCss("simple-sidebar.css")}
-        { renderCss("highlight.default.min.css")}
-        {renderJavaScript("highlight.pack.js")}
 
       </head>
 

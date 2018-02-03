@@ -26,7 +26,6 @@ $( document ).ready(function(){
  if (mainContentId != null && contentId != null){
      renderContent(mainContentId,contentId);
  }
- hljs.initHighlightingOnLoad();
 });
 
 $('#menu-toggle').click(function(e) {
