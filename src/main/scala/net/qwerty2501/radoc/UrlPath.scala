@@ -7,28 +7,26 @@ trait UrlPath {
   override def toString: String = displayPath
 
   val displayPath: String =
-    root + parts
+    parts
       .collect {
         case plain: PlainPath             => plain.path
         case pathParameter: PathParameter => pathParameter.displayField
+        case p: Separator                 => p.toString
       }
-      .mkString("/")
+      .mkString("")
 
   val actualPath: String = {
     val qps = queryParameterParts
-    root + parts
+    parts
       .collect {
+
         case plain: PlainPath => plain.path
         case pathParameter: PathParameter =>
           pathParameter.parameter.value.toString
+        case queryParameter: QueryParameter => queryParameter.display
+        case p                              => p.toString
       }
-      .mkString("/") + (if (qps.nonEmpty)
-                          "?" + qps
-                            .map { qp =>
-                              qp.display
-                            }
-                            .mkString("&")
-                        else "")
+      .mkString("")
   }
 
   val pathParameters: Seq[Parameter] =
@@ -37,6 +35,7 @@ trait UrlPath {
   val queries: Seq[Parameter] = queryParameterParts.map(_.parameter)
 
   private[radoc] def paths: Seq[PartOfUrlPath] = parts.collect {
+    case root: Separator              => root
     case plain: PlainPath             => plain
     case pathParameter: PathParameter => pathParameter
   }
@@ -49,21 +48,20 @@ trait UrlPath {
     case queryParameter: QueryParameter => queryParameter
   }
 
-  private[radoc] def root: String = {
-    parts
-      .collectFirst {
-        case root: RootPath => root.path
-      }
-      .getOrElse("")
-
-  }
-
 }
 
 private[radoc] trait PartOfUrlPath
 
-private[radoc] case class RootPath() extends PartOfUrlPath {
-  def path = "/"
+private[radoc] case class Separator() extends PartOfUrlPath {
+  override def toString: String = "/"
+}
+
+private[radoc] case class Question() extends PartOfUrlPath {
+  override def toString: String = "?"
+}
+
+private[radoc] case class Ampersand() extends PartOfUrlPath {
+  override def toString: String = "&"
 }
 
 private[radoc] case class PlainPath(path: String) extends PartOfUrlPath
@@ -81,18 +79,20 @@ class PathOfUrlPath private[radoc] (override val parts: Seq[PartOfUrlPath])
     extends UrlPath {
 
   def /(path: String): PathOfUrlPath =
-    new PathOfUrlPath(parts :+ PlainPath(path))
+    new PathOfUrlPath(parts ++ Seq(Separator(), PlainPath(path)))
   def /(parameterPath: Parameter): PathOfUrlPath =
-    new PathOfUrlPath(parts :+ PathParameter(parameterPath))
+    new PathOfUrlPath(parts ++ Seq(Separator(), PathParameter(parameterPath)))
 
   def :?(queryParameter: Parameter): QueriesOfUrlPath =
-    new QueriesOfUrlPath(parts :+ QueryParameter(queryParameter))
+    new QueriesOfUrlPath(
+      parts ++ Seq(Question(), QueryParameter(queryParameter)))
 }
 
 class QueriesOfUrlPath private[radoc] (override val parts: Seq[PartOfUrlPath])
     extends UrlPath {
   def &(queryParameter: Parameter): QueriesOfUrlPath =
-    new QueriesOfUrlPath(parts :+ QueryParameter(queryParameter))
+    new QueriesOfUrlPath(
+      parts ++ Seq(Ampersand(), QueryParameter(queryParameter)))
 }
 
 object UrlPath {
@@ -106,12 +106,12 @@ object UrlPath {
         path
       }
     } else path
-    new PathOfUrlPath(Seq(RootPath(), PlainPath(targetPath)))
+    new PathOfUrlPath(Seq(Separator(), PlainPath(targetPath)))
   }
 
   def /(path: String): PathOfUrlPath =
-    new PathOfUrlPath(Seq(RootPath(), PlainPath(path)))
+    new PathOfUrlPath(Seq(Separator(), PlainPath(path)))
 
   def /(pathParameter: Parameter): PathOfUrlPath =
-    new PathOfUrlPath(Seq(RootPath(), PathParameter(pathParameter)))
+    new PathOfUrlPath(Seq(Separator(), PathParameter(pathParameter)))
 }

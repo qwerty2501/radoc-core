@@ -187,9 +187,6 @@ private object ApiDocumentHtmlRenderer {
             case _ =>"badge-default"
           } ) } ><span class="font-weight-bold text-white"  style="font-size:16px;" >{apiDocument.method}</span></div>
         </p>
-        <p>
-          <div class="bg-dark badge p-2 "><span class="font-weight-bold text-white" style="font-size:20px;"    >{apiDocument.path.displayPath}</span></div>
-        </p>
         <div>
           <p>
             {apiDocument.description.renderHtml(HtmlRenderArguments(
@@ -287,7 +284,7 @@ private object ApiDocumentHtmlRenderer {
             {
             parameters.map { parameter =>
               <tr >
-                <td scope="row" style="width:15%;">{if(parameter.color != Color()) <span style={"color:" + parameter.color.toString() } >{parameter.field}</span>  else  parameter.field}</td>
+                <td scope="row" style="width:15%;">{renderParameter(parameter,parameter.field)}</td>
                 <td style="width:15%;" >{parameter.typeName}</td>
                 <td style="width:70%;" >{parameter.description.renderHtml(
                   HtmlRenderArguments(
@@ -308,8 +305,9 @@ private object ApiDocumentHtmlRenderer {
     val ti = tabId(currentApiDocument, messageDocument)
     <div id={ti} class={"tab-pane" + (if (messageDocument == currentApiDocument.messageDocumentMap.values.head)" active" else "") } >
       <p>
+        {renderUrlPathOuter(renderDisplayUrlPath(messageDocument.request.path))}
         <h3>Request</h3>
-        {messageDocument.request.path.actualPath}
+        {renderUrlPathOuter(renderActualURLPath(messageDocument.request.path))}
         {renderParameters("Path parameters",messageDocument.request.path.pathParameters)}
         {renderParameters("Queries",messageDocument.request.path.queries)}
         <div>{renderMessage(messageDocument.request,"request-content-" + ti)}</div>
@@ -332,6 +330,36 @@ private object ApiDocumentHtmlRenderer {
   private def renderJavaScript(fileName: String): Node = {
     val path = "assets/js/" + fileName
     <script type="text/javascript">{Unparsed(ResourceLoader.loadJavaScript(fileName).replace("</script>","\\u003c\\u002f\\u0073\\u0063\\u0072\\u0069\\u0070\\u0074\\u003e"))}</script>
+  }
+
+  private def renderUrlPathOuter(node: Seq[Node]): Node = {
+    <div class="badge p-2" style="background:black;" ><span class="font-weight-bold text-white" style="font-size:20px;">{node}</span></div>
+  }
+
+  private def renderDisplayUrlPath(urlPath: UrlPath): Seq[Node] = {
+    urlPath.parts.collect {
+
+      case plain: PlainPath => xml.Text(plain.path)
+      case pathParameter: PathParameter =>
+        renderParameter(pathParameter.parameter, pathParameter.displayField)
+      case separator: Separator => xml.Text(separator.toString)
+    }
+  }
+
+  private def renderActualURLPath(urlPath: UrlPath): Seq[Node] = {
+    urlPath.parts.collect {
+      case plain: PlainPath => xml.Text(plain.path)
+      case pathParameter: PathParameter =>
+        renderParameter(pathParameter.parameter,
+                        pathParameter.parameter.value.toString)
+      case queryParameter: QueryParameter =>
+        <span>{renderParameter(queryParameter.parameter, queryParameter.parameter.field)}{"="}{renderParameter(queryParameter.parameter, queryParameter.parameter.value.toString)}</span>
+      case p => xml.Text(p.toString)
+    }
+  }
+
+  private def renderParameter(parameter: Parameter, text: String): Node = {
+    <span style={"color:" + parameter.color.toString} >{text}</span>
   }
 
   private[radoc] def tabId(apiDocument: ApiDocument,
