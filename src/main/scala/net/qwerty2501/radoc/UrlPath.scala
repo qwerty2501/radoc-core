@@ -99,7 +99,7 @@ object UrlPath {
 
   def apply(path: String): PathOfUrlPath = {
 
-    val targetPath = if (path.length > 0) {
+    val targetPath = if (path.nonEmpty) {
       if (path.headOption.getOrElse("") == "/") {
         path.substring(1)
       } else {
