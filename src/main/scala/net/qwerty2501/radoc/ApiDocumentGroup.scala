@@ -1,7 +1,7 @@
 package net.qwerty2501.radoc
 
-case class APIDocumentGroup(group: String,
-                            apiDocuments: Map[(Method, String), APIDocument],
+case class ApiDocumentGroup(group: String,
+                            apiDocuments: Map[(Method, String), ApiDocument],
                             category: String,
                             version: Version) {
 

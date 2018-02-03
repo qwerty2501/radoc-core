@@ -1,6 +1,6 @@
 package net.qwerty2501.radoc
 
-case class APIDocument(method: Method,
+case class ApiDocument(method: Method,
                        path: UrlPath,
                        messageDocumentMap: Map[String, MessageDocument],
                        description: Text,

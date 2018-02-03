@@ -2,12 +2,12 @@ package net.qwerty2501.radoc
 
 import scala.collection.mutable
 
-class APIDocumentBuilder(private val apiClient: APIClient) {
-  private var rootAPIDocument = RootAPIDocument("", Map())
+class ApiDocumentBuilder(private val apiClient: ApiClient) {
+  private var rootAPIDocument = RootApiDocument("", Map())
 
   def setRootDocumentTitle(title: String): Unit =
-    rootAPIDocument = RootAPIDocument(title, rootAPIDocument.documents)
-  def buildRootAPIDocument: RootAPIDocument = rootAPIDocument
+    rootAPIDocument = RootApiDocument(title, rootAPIDocument.documents)
+  def buildRootAPIDocument: RootApiDocument = rootAPIDocument
   def request(req: Request, documentArgs: DocumentArgs): Response = {
     val res = apiClient.request(req)
     append(req, res, documentArgs)
@@ -52,15 +52,15 @@ class APIDocumentBuilder(private val apiClient: APIClient) {
 
       val rootAPIDocumentWithVersion = rootAPIDocument.documents
         .getOrElse(documentArgs.version,
-                   RootAPIDocumentWithVersion(documentArgs.version, Map()))
+                   RootApiDocumentWithVersion(documentArgs.version, Map()))
 
       val apiDocumentCategory =
         rootAPIDocumentWithVersion.apiCategories
           .getOrElse(documentArgs.category,
-                     APIDocumentCategory(documentArgs.category, Map()))
+                     ApiDocumentCategory(documentArgs.category, Map()))
       val apiDocumentGroup = apiDocumentCategory.apiDocumentGroups
         .getOrElse(apiGroup,
-                   APIDocumentGroup(apiGroup,
+                   ApiDocumentGroup(apiGroup,
                                     Map(),
                                     apiDocumentCategory.category,
                                     rootAPIDocumentWithVersion.version))
@@ -68,7 +68,7 @@ class APIDocumentBuilder(private val apiClient: APIClient) {
       val groupKey = (req.method, req.path.displayPath)
       val apiDocument = apiDocumentGroup.apiDocuments
         .getOrElse(groupKey,
-                   APIDocument(req.method,
+                   ApiDocument(req.method,
                                req.path,
                                Map(),
                                Text(),
@@ -86,7 +86,7 @@ class APIDocumentBuilder(private val apiClient: APIClient) {
                                                       res.status.toString,
                                                       documentArgs.messageName))
 
-      val newAPIDocument = APIDocument(
+      val newAPIDocument = ApiDocument(
         apiDocument.method,
         apiDocument.path,
         apiDocument.messageDocumentMap + (messageName ->
@@ -101,7 +101,7 @@ class APIDocumentBuilder(private val apiClient: APIClient) {
       val apiDocuments = mutable.Map(apiDocumentGroup.apiDocuments.toSeq: _*)
       apiDocuments.put(groupKey, newAPIDocument)
       val newAPIDocumentGroup =
-        APIDocumentGroup(apiDocumentGroup.group,
+        ApiDocumentGroup(apiDocumentGroup.group,
                          apiDocuments.toMap,
                          apiDocumentCategory.category,
                          rootAPIDocumentWithVersion.version)
@@ -111,7 +111,7 @@ class APIDocumentBuilder(private val apiClient: APIClient) {
       apiDocumentGroups.put(apiGroup, newAPIDocumentGroup)
 
       val newAPIDocumentCategory =
-        APIDocumentCategory(documentArgs.category, apiDocumentGroups.toMap)
+        ApiDocumentCategory(documentArgs.category, apiDocumentGroups.toMap)
 
       val apiCategories =
         mutable.Map(rootAPIDocumentWithVersion.apiCategories.toSeq: _*)
@@ -119,14 +119,14 @@ class APIDocumentBuilder(private val apiClient: APIClient) {
       apiCategories.put(documentArgs.category, newAPIDocumentCategory)
 
       val newRooAPIDocumentWithVersion =
-        RootAPIDocumentWithVersion(documentArgs.version, apiCategories.toMap)
+        RootApiDocumentWithVersion(documentArgs.version, apiCategories.toMap)
 
       val newRootAPIDocumentWithVersions =
         mutable.Map(rootAPIDocument.documents.toSeq: _*)
       newRootAPIDocumentWithVersions.put(documentArgs.version,
                                          newRooAPIDocumentWithVersion)
 
-      rootAPIDocument = RootAPIDocument(rootAPIDocument.title,
+      rootAPIDocument = RootApiDocument(rootAPIDocument.title,
                                         newRootAPIDocumentWithVersions.toMap)
     }
   }

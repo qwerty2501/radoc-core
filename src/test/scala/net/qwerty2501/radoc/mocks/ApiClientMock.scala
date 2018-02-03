@@ -2,7 +2,7 @@ package net.qwerty2501.radoc.mocks
 
 import net.qwerty2501.radoc._
 
-class APIClientMock extends APIClient {
+class ApiClientMock extends ApiClient {
   override def request(request: Request): Response =
     Response(Status.Ok,
              """

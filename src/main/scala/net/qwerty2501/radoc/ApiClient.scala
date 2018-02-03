@@ -1,5 +1,5 @@
 package net.qwerty2501.radoc
 
-trait APIClient {
+trait ApiClient {
   def request(request: Request): Response
 }

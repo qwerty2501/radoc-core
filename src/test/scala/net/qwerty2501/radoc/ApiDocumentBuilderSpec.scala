@@ -3,10 +3,10 @@ package net.qwerty2501.radoc
 import net.qwerty2501.radoc.mocks._
 import org.scalatest._
 import net.qwerty2501.radoc._
-class APIDocumentBuilderSpec extends FlatSpec with Matchers {
+class ApiDocumentBuilderSpec extends FlatSpec with Matchers {
 
   it should "can add request response" in {
-    val apiDocumentBuilder = new APIDocumentBuilderMock()
+    val apiDocumentBuilder = new ApiDocumentBuilderMock()
     val path = UrlPath / "test" / "path"
     val response = apiDocumentBuilder.request(Request.get(path))
 
@@ -25,7 +25,7 @@ class APIDocumentBuilderSpec extends FlatSpec with Matchers {
   }
 
   it should "can add request response and description" in {
-    val apiDocumentBuilder = new APIDocumentBuilderMock()
+    val apiDocumentBuilder = new ApiDocumentBuilderMock()
     val path = UrlPath / "test/path"
     val description = Text("description")
     val response = apiDocumentBuilder.request(Request.get(path), description)
@@ -44,7 +44,7 @@ class APIDocumentBuilderSpec extends FlatSpec with Matchers {
   }
 
   it should "can not add description twice to same api document" in {
-    val apiDocumentBuilder = new APIDocumentBuilderMock()
+    val apiDocumentBuilder = new ApiDocumentBuilderMock()
     val path = UrlPath / "test/path"
     val description = Text("description")
 
@@ -55,7 +55,7 @@ class APIDocumentBuilderSpec extends FlatSpec with Matchers {
   }
 
   it should "can add message document with same message name. But append with numbers." in {
-    val apiDocumentBuilder = new APIDocumentBuilderMock()
+    val apiDocumentBuilder = new ApiDocumentBuilderMock()
     val path = UrlPath / "test/path"
 
     apiDocumentBuilder.request(Request.get(path))
@@ -74,7 +74,7 @@ class APIDocumentBuilderSpec extends FlatSpec with Matchers {
 
   it should "can add same path request but difference method" in {
 
-    val apiDocumentBuilder = new APIDocumentBuilderMock()
+    val apiDocumentBuilder = new ApiDocumentBuilderMock()
     val targetPath = UrlPath / "test/path"
     apiDocumentBuilder.request(Request.get(targetPath))
     apiDocumentBuilder.request(Request.post(targetPath, Content()))

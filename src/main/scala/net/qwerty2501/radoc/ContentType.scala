@@ -8,9 +8,9 @@ private object ContentType {
   val Json = new ContentType()
   val Xml = new ContentType()
   val Text = new ContentType()
-  private[radoc] def apply(headers: Seq[Parameter]): ContentType = {
+  private[radoc] def apply(headers: HeaderParameterList): ContentType = {
     val contentType =
-      headers.headOption
+      headers.getHeaders.headOption
         .find(_.field == "Content-Type")
         .getOrElse(Parameter("Content-Type", "", radoc.Text()))
         .value

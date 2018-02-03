@@ -80,7 +80,7 @@ object Request {
     new Request(method, path, headers)
 
   def apply(method: Method, path: UrlPath, text: String): Request =
-    new Request(method, path, TextContent(text))
+    new Request(method, path, Content(text))
 
   def apply(method: Method, path: UrlPath): Request =
     new Request(method, path)
@@ -92,7 +92,7 @@ object Request {
             path: UrlPath,
             headers: Seq[Parameter],
             text: String): Request =
-    new Request(method, path, headers, TextContent(text))
+    new Request(method, path, headers, Content(text))
 
   private def apply(method: Method,
                     path: UrlPath,

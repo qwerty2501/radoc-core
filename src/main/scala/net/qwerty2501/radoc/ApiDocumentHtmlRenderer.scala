@@ -2,14 +2,16 @@ package net.qwerty2501.radoc
 
 import java.io.{File, PrintWriter}
 
+import io.circe.parser.parse
+
 import scala.io.Source
 import scala.xml._
 
-private object APIDocumentHtmlRenderer {
+private object ApiDocumentHtmlRenderer {
 
-  private[radoc] def render(rootAPIDocument: RootAPIDocument,
-                            context: APIDocumentRendererContext): String = {
-    val doc = renderRootAPIDocument(rootAPIDocument, context)
+  private[radoc] def render(rootApiDocument: RootApiDocument,
+                            context: ApiDocumentHtmlRendererContext): String = {
+    val doc = renderRootApiDocument(rootApiDocument, context)
     dtd
       .DocType("html", dtd.SystemID("about:legacy-compat"), Nil)
       .toString() + "\n" + Xhtml.toXhtml(doc)
@@ -19,14 +21,14 @@ private object APIDocumentHtmlRenderer {
     Source.fromResource(path, this.getClass.getClassLoader).mkString
   }
 
-  private[radoc] def renderRootAPIDocument(
-      rootAPIDocument: RootAPIDocument,
-      context: APIDocumentRendererContext): Elem = {
+  private[radoc] def renderRootApiDocument(
+      rootApiDocument: RootApiDocument,
+      context: ApiDocumentHtmlRendererContext): Elem = {
 
     <html>
       <head>
         <meta charset="UTF-8"/>
-        <title>{rootAPIDocument.title}</title>
+        <title>{rootApiDocument.title}</title>
         {renderCss("bootstrap.min.css")}
         {renderCss("simple-sidebar.css")}
         { renderCss("highlight.default.min.css")}
@@ -43,10 +45,10 @@ private object APIDocumentHtmlRenderer {
           </button>
 
           <a class="navbar-brand mx-auto" href="#">
-            {rootAPIDocument.title}
-          </a>{if (rootAPIDocument.documents.size > 1) {
+            {rootApiDocument.title}
+          </a>{if (rootApiDocument.documents.size > 1) {
           <select class="span2 navbar-btn float-sm-right">
-            {rootAPIDocument.documents.map { doc =>
+            {rootApiDocument.documents.map { doc =>
             <option value={doc._1.toString}>
               {doc._1.toString}
             </option>
@@ -61,9 +63,9 @@ private object APIDocumentHtmlRenderer {
 
         <div class="container-fluid" >
           {
-          if (rootAPIDocument.documents.size == 1) {
-            renderRootAPIDocumentWithVersion(rootAPIDocument.documents.head._2,rootAPIDocument, context)
-          } else if (rootAPIDocument.documents.size > 1) {
+          if (rootApiDocument.documents.size == 1) {
+            renderRootApiDocumentWithVersion(rootApiDocument.documents.head._2,rootApiDocument, context)
+          } else if (rootApiDocument.documents.size > 1) {
 
           }
           }
@@ -76,18 +78,18 @@ private object APIDocumentHtmlRenderer {
     </html>
   }
 
-  private[radoc] def renderRootAPIDocumentWithVersion(
-      rootAPIDocumentWithVersion: RootAPIDocumentWithVersion,
-      rootAPIDocument: RootAPIDocument,
-      context: APIDocumentRendererContext): Elem = {
+  private[radoc] def renderRootApiDocumentWithVersion(
+      rootApiDocumentWithVersion: RootApiDocumentWithVersion,
+      rootApiDocument: RootApiDocument,
+      context: ApiDocumentHtmlRendererContext): Elem = {
 
-    val apiCategories = rootAPIDocumentWithVersion.apiCategories
+    val apiCategories = rootApiDocumentWithVersion.apiCategories
     val mainContentId =
-      Link.mainContentId(rootAPIDocumentWithVersion.version)
+      Link.mainContentId(rootApiDocumentWithVersion.version)
 
     def generateTemplateId(categoryId: String, groupId: String) =
       (categoryId + groupId).hashCode.toString
-    def renderGroupHeaders(groups: Seq[APIDocumentGroup],
+    def renderGroupHeaders(groups: Seq[ApiDocumentGroup],
                            categoryId: String,
                            mainContentId: String,
                            version: Version): Seq[Elem] = {
@@ -105,14 +107,14 @@ private object APIDocumentHtmlRenderer {
           <ul class="sidebar-nav">
 
             {if (apiCategories.exists(_._1 == "")) {
-            renderGroupHeaders(apiCategories.head._2.apiDocumentGroups.values.toSeq,apiCategories.head._1, mainContentId,rootAPIDocumentWithVersion.version)
+            renderGroupHeaders(apiCategories.head._2.apiDocumentGroups.values.toSeq,apiCategories.head._1, mainContentId,rootApiDocumentWithVersion.version)
           }}
           </ul>
           {
-          apiCategories.filter(_._1 != "").map{tAPICategory=>
-            <p>{tAPICategory._1}</p>
+          apiCategories.filter(_._1 != "").map{tApiCategory=>
+            <p>{tApiCategory._1}</p>
               <ul class="sidebar-nav">
-                renderGroupHeaders(tAPICategory._2.apiDocumentGroups.keys.toSeq,tAPICategory._1,mainContentId)
+                renderGroupHeaders(tApiCategory._2.apiDocumentGroups.keys.toSeq,tApiCategory._1,mainContentId)
               </ul>
           }
           }
@@ -129,7 +131,7 @@ private object APIDocumentHtmlRenderer {
             apiCategories.map{apiCategory=>
               apiCategory._2.apiDocumentGroups.map{apiDocumentGroup=>
                 <template id={ Link.templateId(apiCategory._2.category,apiDocumentGroup._2.group) } >
-                  {renderAPIGroupDocument(apiDocumentGroup._2,apiCategory._2,rootAPIDocumentWithVersion,rootAPIDocument,context)}
+                  {renderApiGroupDocument(apiDocumentGroup._2,apiCategory._2,rootApiDocumentWithVersion,rootApiDocument,context)}
                 </template>
               }
             }
@@ -144,12 +146,12 @@ private object APIDocumentHtmlRenderer {
 
   }
 
-  private[radoc] def renderAPIGroupDocument(
-      apiDocumentGroup: APIDocumentGroup,
-      currentCategory: APIDocumentCategory,
-      currentAPIDocumentWithVersion: RootAPIDocumentWithVersion,
-      rootAPIDocument: RootAPIDocument,
-      context: APIDocumentRendererContext): Elem = {
+  private[radoc] def renderApiGroupDocument(
+      apiDocumentGroup: ApiDocumentGroup,
+      currentCategory: ApiDocumentCategory,
+      currentApiDocumentWithVersion: RootApiDocumentWithVersion,
+      rootApiDocument: RootApiDocument,
+      context: ApiDocumentHtmlRendererContext): Elem = {
     <div>
       <div>
         <h1 class="bd-title">{apiDocumentGroup.group}</h1>
@@ -157,7 +159,7 @@ private object APIDocumentHtmlRenderer {
       <p>
         {
         apiDocumentGroup.apiDocuments.toSeq.sortBy(t=>Method.priority(t._1._1)).map { apiDocument =>
-          renderAPIDocument(apiDocument._2,apiDocumentGroup,currentCategory,currentAPIDocumentWithVersion,rootAPIDocument,context)
+          renderApiDocument(apiDocument._2,apiDocumentGroup,currentCategory,currentApiDocumentWithVersion,rootApiDocument,context)
         }
         }
       </p>
@@ -165,13 +167,13 @@ private object APIDocumentHtmlRenderer {
     </div>
   }
 
-  private[radoc] def renderAPIDocument(
-      apiDocument: APIDocument,
-      currentGroup: APIDocumentGroup,
-      currentCategory: APIDocumentCategory,
-      currentAPIDocumentWithVersion: RootAPIDocumentWithVersion,
-      rootAPIDocument: RootAPIDocument,
-      context: APIDocumentRendererContext): Elem = {
+  private[radoc] def renderApiDocument(
+      apiDocument: ApiDocument,
+      currentGroup: ApiDocumentGroup,
+      currentCategory: ApiDocumentCategory,
+      currentApiDocumentWithVersion: RootApiDocumentWithVersion,
+      rootApiDocument: RootApiDocument,
+      context: ApiDocumentHtmlRendererContext): Elem = {
 
     <p>
       <div >
@@ -190,9 +192,9 @@ private object APIDocumentHtmlRenderer {
         </p>
         <div>
           <p>
-            {apiDocument.description.renderHtml(TextRenderingArguments(
-            rootAPIDocument,
-            currentAPIDocumentWithVersion,
+            {apiDocument.description.renderHtml(HtmlRenderArguments(
+            rootApiDocument,
+            currentApiDocumentWithVersion,
             currentCategory,
             currentGroup,
             apiDocument,
@@ -209,7 +211,7 @@ private object APIDocumentHtmlRenderer {
         </ul>
         <div class="tab-content">
           {apiDocument.messageDocumentMap.values.map(messageDocument =>
-          renderMessageDocument(messageDocument,apiDocument,currentGroup,currentCategory,currentAPIDocumentWithVersion,rootAPIDocument,context))
+          renderMessageDocument(messageDocument,apiDocument,currentGroup,currentCategory,currentApiDocumentWithVersion,rootApiDocument,context))
           }
         </div>
 
@@ -222,12 +224,12 @@ private object APIDocumentHtmlRenderer {
 
   private[radoc] def renderMessageDocument(
       messageDocument: MessageDocument,
-      currentAPIDocument: APIDocument,
-      currentGroup: APIDocumentGroup,
-      currentCategory: APIDocumentCategory,
-      currentAPIDocumentWithVersion: RootAPIDocumentWithVersion,
-      rootAPIDocument: RootAPIDocument,
-      context: APIDocumentRendererContext): Elem = {
+      currentApiDocument: ApiDocument,
+      currentGroup: ApiDocumentGroup,
+      currentCategory: ApiDocumentCategory,
+      currentApiDocumentWithVersion: RootApiDocumentWithVersion,
+      rootApiDocument: RootApiDocument,
+      context: ApiDocumentHtmlRendererContext): Elem = {
 
     def renderMessage(message: Message, contentId: String): Elem = {
       <div>
@@ -235,24 +237,34 @@ private object APIDocumentHtmlRenderer {
           {renderParameters("Headers", message.headers.getHeaders)}
         </div>
 
-        {renderContent(message,contentId)}
+        {renderExample(message,contentId)}
 
       </div>
 
     }
 
-    def renderContent(message: Message, contentId: String): Node = {
-      if (message.content != Content()) {
-        <div>
+    def renderExample(message: Message, contentId: String): Node = {
+      <div>
 
-          <button type="button" class="btn btn-info" data-toggle="collapse" data-target={"#"+contentId}>expand example content</button>
-          <div id={contentId} class="collapse">
-            <pre><br/><code class="json">{message.content.renderHtml(ContentType(message.headers.getHeaders))}</code><br/></pre>
-          </div>
+        <button type="button" class="btn btn-info" data-toggle="collapse" data-target={"#"+contentId}>expand example</button>
+        <div id={contentId} class="collapse">
+          {renderContent(message,contentId)}
         </div>
+      </div>
+    }
 
+    def renderContent(message: Message, contentId: String): Node = {
+      val renderArguments = HtmlRenderArguments(rootApiDocument,
+                                                currentApiDocumentWithVersion,
+                                                currentCategory,
+                                                currentGroup,
+                                                currentApiDocument,
+                                                messageDocument,
+                                                context)
+      if (context.contentHtmlRenderer != null) {
+        context.contentHtmlRenderer.render(message, renderArguments)
       } else {
-        xml.Text("")
+        ContentHtmlRenderer.default.render(message, renderArguments)
       }
 
     }
@@ -275,9 +287,9 @@ private object APIDocumentHtmlRenderer {
                 <td scope="row" style="width:15%;">{if(parameter.color != Color()) <span style={"color:" + parameter.color.toString() } >{parameter.field}</span>  else  parameter.field}</td>
                 <td style="width:15%;" >{parameter.typeName}</td>
                 <td style="width:70%;" >{parameter.description.renderHtml(
-                  TextRenderingArguments(
-                    rootAPIDocument,currentAPIDocumentWithVersion,currentCategory,
-                    currentGroup,currentAPIDocument,messageDocument,context
+                  HtmlRenderArguments(
+                    rootApiDocument,currentApiDocumentWithVersion,currentCategory,
+                    currentGroup,currentApiDocument,messageDocument,context
                   ))}
                 </td>
               </tr>
@@ -290,8 +302,8 @@ private object APIDocumentHtmlRenderer {
       } else xml.Text("")
 
     }
-    val ti = tabId(currentAPIDocument, messageDocument)
-    <div id={ti} class={"tab-pane" + (if (messageDocument == currentAPIDocument.messageDocumentMap.values.head)" active" else "") } >
+    val ti = tabId(currentApiDocument, messageDocument)
+    <div id={ti} class={"tab-pane" + (if (messageDocument == currentApiDocument.messageDocumentMap.values.head)" active" else "") } >
       <p>
         <h3>Request</h3>
         {messageDocument.request.path.actualPath}
@@ -319,7 +331,7 @@ private object APIDocumentHtmlRenderer {
     <script type="text/javascript">{Unparsed(ResourceLoader.loadJavaScript(fileName).replace("</script>","\\u003c\\u002f\\u0073\\u0063\\u0072\\u0069\\u0070\\u0074\\u003e"))}</script>
   }
 
-  private[radoc] def tabId(apiDocument: APIDocument,
+  private[radoc] def tabId(apiDocument: ApiDocument,
                            messageDocument: MessageDocument): String = {
     Link.fragmentId(apiDocument) + messageDocument.messageName.hashCode
   }

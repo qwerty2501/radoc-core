@@ -2,11 +2,11 @@ package net.qwerty2501.radoc
 
 import org.scalatest._
 
-class APIDocumentSpec extends FlatSpec with Matchers {
+class ApiDocumentSpec extends FlatSpec with Matchers {
 
   "unmatched path documents" should "throw IllegalArgumentException" in {
     intercept[IllegalArgumentException] {
-      APIDocument(
+      ApiDocument(
         Method.Get,
         UrlPath / "test/path1",
         Map(
@@ -27,7 +27,7 @@ class APIDocumentSpec extends FlatSpec with Matchers {
 
   "unmatched method documents" should "throw IllegalArgumentException" in {
     intercept[IllegalArgumentException] {
-      APIDocument(
+      ApiDocument(
         Method.Get,
         UrlPath / "test/path",
         Map(

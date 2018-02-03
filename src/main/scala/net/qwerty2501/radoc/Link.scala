@@ -2,14 +2,14 @@ package net.qwerty2501.radoc
 
 object Link {
 
-  def href(apiDocumentGroup: APIDocumentGroup): String = {
+  def href(apiDocumentGroup: ApiDocumentGroup): String = {
 
     href(apiDocumentGroup.version,
          apiDocumentGroup.category,
          apiDocumentGroup.group)
 
   }
-  def href(apiDocument: APIDocument): String = {
+  def href(apiDocument: ApiDocument): String = {
     href(apiDocument.version, apiDocument.category, apiDocument.group) + "#" + fragment(
       apiDocument)
   }
@@ -21,7 +21,7 @@ object Link {
       templateId(category, group) + "&version=" + version.toString
   }
 
-  def fragment(apiDocument: APIDocument): String =
+  def fragment(apiDocument: ApiDocument): String =
     "#" + fragmentId(apiDocument)
 
   private[radoc] def mainContentId(version: Version): String =
@@ -30,7 +30,7 @@ object Link {
   private[radoc] def templateId(category: String, group: String): String =
     category.hashCode.toString + group.hashCode.toString
 
-  private[radoc] def fragmentId(apiDocument: APIDocument): String = {
+  private[radoc] def fragmentId(apiDocument: ApiDocument): String = {
     val group = apiDocument.group
     val category = apiDocument.category
     val version = apiDocument.version
