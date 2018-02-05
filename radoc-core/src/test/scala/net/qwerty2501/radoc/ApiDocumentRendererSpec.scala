@@ -12,9 +12,9 @@ class ApiDocumentRendererSpec extends FlatSpec with Matchers {
 
   private def getSampleDocument = {
     val builder = new ApiDocumentBuilderMock()
-    val sampleJson = """
+    val sampleJson = Body("""
                        |{ "member":1}
-                     """.stripMargin
+                     """.stripMargin)
     val sampleResponse = Response(
       Status.Ok,
       Seq(
@@ -38,14 +38,14 @@ class ApiDocumentRendererSpec extends FlatSpec with Matchers {
       Request.post(
         UrlPath / "sample/path" / Parameter("id", 44, Text("id description"))
           :? Parameter("name", "john", Text("name description")),
-        sampleJson),
+        body = sampleJson),
       sampleResponse
     )
     builder.append(
       Request.put(
         UrlPath / "sample/path" / Parameter("id", 32, Text("id description"))
           :? Parameter("name", "john", Text("name description")),
-        sampleJson),
+        body = sampleJson),
       sampleResponse
     )
     builder.append(

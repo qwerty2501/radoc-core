@@ -77,7 +77,7 @@ class ApiDocumentBuilderSpec extends FlatSpec with Matchers {
     val apiDocumentBuilder = new ApiDocumentBuilderMock()
     val targetPath = UrlPath / "test/path"
     apiDocumentBuilder.request(Request.get(targetPath))
-    apiDocumentBuilder.request(Request.post(targetPath, Body()))
+    apiDocumentBuilder.request(Request.post(targetPath, body = Body()))
     val apiDocumentGroup = apiDocumentBuilder.buildRootAPIDocument
       .documents(Version())
       .apiCategories("")
