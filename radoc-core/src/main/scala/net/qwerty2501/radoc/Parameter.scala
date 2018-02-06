@@ -21,11 +21,6 @@ case class Parameter private (field: String,
          typeName,
          description,
          ParameterColor.color())
-  def this(field: String,
-           value: Any,
-           typeNames: Seq[String],
-           description: Text) =
-    this(field, value, typeNames.mkString(" | "), description)
 
   def this(field: String, value: Any, tte: Type, description: Text) =
     this(field, value, tte.typeSymbol.name.toString, description)
@@ -60,9 +55,4 @@ object Parameter {
             description: Text): Parameter =
     new Parameter(field, value, tte, description)
 
-  def apply(field: String,
-            value: Any,
-            typeNames: Seq[String],
-            description: Text) =
-    new Parameter(field, value, typeNames, description)
 }
