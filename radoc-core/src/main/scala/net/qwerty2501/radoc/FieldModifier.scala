@@ -24,8 +24,8 @@ private class CamelFieldModifier() extends FieldModifier {
     })
 }
 
-private object FieldModifier {
-  val None = new NoneFieldModifier()
-  val Snake = new SnakeFieldModifier()
-  val Camel = new CamelFieldModifier()
+object FieldModifier {
+  val None: FieldModifier = new NoneFieldModifier()
+  val Snake: FieldModifier = new SnakeFieldModifier()
+  val Camel: FieldModifier = new CamelFieldModifier()
 }
