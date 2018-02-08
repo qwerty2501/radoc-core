@@ -28,29 +28,43 @@ object JsonBodyHint {
     new JsonBodyHint(recompose(jsonHint, typeParameterMap), typeParameterMap)
   }
 
-  def apply[T:TypeTag](fieldModifier: FieldModifier = FieldModifier.snake): JsonBodyHint = {
+  def apply[T: TypeTag](
+      fieldModifier: FieldModifier = FieldModifier.snake): JsonBodyHint = {
     val accessors = typeOf[T].members.collect {
-      case m: MethodSymbol if m.isGetter && m.isPublic => m.returnType.typeSymbol
+      case m: MethodSymbol if m.isGetter && m.isPublic =>
+        m.returnType.typeSymbol
     }
 
     new JsonBodyHint(JsonObjectHint(ParameterHint(Parameter("", "", Text()),
-      Essentiality.mandatory),
-      Seq()),
-      Map())
+                                                  Essentiality.Mandatory),
+                                    Seq()),
+                     Map())
   }
 
-  def expected[T:TypeTag](expected: T, fieldModifier: FieldModifier = FieldModifier.snake): JsonBodyHint = {
+  private final val seqTypeName = classOf[Seq[_]].getName
+
+  def expected[T: TypeTag](
+      expected: T,
+      fieldModifier: FieldModifier = FieldModifier.snake): JsonBodyHint = {
     new JsonBodyHint(JsonObjectHint(ParameterHint(Parameter("", "", Text()),
-      Essentiality.mandatory),
-      Seq()),
-      Map())
+                                                  Essentiality.Mandatory),
+                                    Seq()),
+                     Map())
   }
 
-  private def getFromTypeHint(valueType:TypeSymbol, fieldModifier: FieldModifier = FieldModifier.snake,generateAssertHandler:(ParameterHint)=>Unit)(implicit tt:WeakTypeTag[String]) :JsonHint ={
+  private def getFromTypeHint(
+      symbol: MethodSymbol,
+      fieldModifier: FieldModifier = FieldModifier.snake,
+      generateAssertHandler: (ParameterHint) => Unit): JsonHint = {
+    val valueType = symbol.returnType
+    val typeName =
+      if (valueType.baseClasses.exists(_.asClass.fullName == seqTypeName))
+        "[]" + valueType.typeArgs.head.toString
+      else valueType.toString
 
-    
+    if (valueType.typeSymbol.asClass.isPrimitive) {}
+
   }
-
 
   private def recompose(
       jsonHint: JsonHint,
@@ -137,7 +151,5 @@ object JsonBodyHint {
   private def getValueHint(jsonValueHint: JsonValueHint,
                            sourceMap: Map[String, Seq[Parameter]]): Parameter =
     jsonValueHint.parameterHint.parameter
-
-
 
 }
