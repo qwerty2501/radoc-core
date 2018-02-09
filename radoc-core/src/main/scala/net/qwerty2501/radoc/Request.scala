@@ -6,38 +6,33 @@ case class Request private (method: Method,
                             body: Body)
     extends Message {
 
-  def this(method: Method,
-           path: UrlPath,
-           headers: Seq[Parameter] = Seq(),
-           body: Body = Body()) =
+  def this(method: Method, path: UrlPath, headers: Seq[Parameter], body: Body) =
     this(method, path, HeaderParameterList(headers), body)
 
 }
 
 object Request {
 
-  def get(path: UrlPath, headers: Seq[Parameter] = Seq()): Request =
-    apply(Method.Get, path, headers)
+  def get(path: UrlPath): Request = get(path, Seq())
+  def get(path: UrlPath, headers: Seq[Parameter]): Request =
+    apply(Method.Get, path, headers, Body())
 
-  def post(path: UrlPath,
-           headers: Seq[Parameter] = Seq(),
-           body: Body = Body()): Request =
+  def post(path: UrlPath, body: Body): Request = post(path, Seq(), body)
+  def post(path: UrlPath, headers: Seq[Parameter], body: Body): Request =
     apply(Method.Post, path, headers, body)
 
-  def put(path: UrlPath,
-          headers: Seq[Parameter] = Seq(),
-          body: Body = Body()): Request =
+  def put(path: UrlPath, body: Body): Request = put(path, Seq(), body)
+  def put(path: UrlPath, headers: Seq[Parameter], body: Body): Request =
     apply(Method.Put, path, headers, body)
 
-  def delete(path: UrlPath,
-             headers: Seq[Parameter] = Seq(),
-             body: Body = Body()): Request =
+  def delete(path: UrlPath): Request = delete(path, Seq(), Body())
+  def delete(path: UrlPath, headers: Seq[Parameter], body: Body): Request =
     apply(Method.Delete, path, headers, body)
 
   def apply(method: Method,
             path: UrlPath,
-            headers: Seq[Parameter] = Seq(),
-            body: Body = Body()): Request =
+            headers: Seq[Parameter],
+            body: Body): Request =
     new Request(method, path, headers, body)
 
 }
