@@ -7,7 +7,8 @@ trait Body {
 }
 
 object Body {
-  def apply(): Body = TextBody("")
+  val empty: Body = TextBody("")
+  def apply(): Body = empty
   def apply(text: String): Body = TextBody(text)
 
 }
