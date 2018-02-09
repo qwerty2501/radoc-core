@@ -2,7 +2,9 @@ package net.qwerty2501.radoc
 
 import scala.collection.mutable
 
-class ApiDocumentBuilder(private val apiClient: ApiClient) {
+class ApiDocumentBuilder(private val apiClient: ApiClient,
+                         private val defaultVersion: Version) {
+  def this(apiClient: ApiClient) = this(apiClient, Version.default)
   private var rootAPIDocument = RootApiDocument("", Map())
 
   def setRootDocumentTitle(title: String): Unit =
@@ -48,11 +50,15 @@ class ApiDocumentBuilder(private val apiClient: ApiClient) {
     val apiGroup =
       if (documentArgs.group == "") req.path.displayPath else documentArgs.group
 
+    val targetVersion =
+      if (documentArgs.version == Version()) defaultVersion
+      else documentArgs.version
+
     rootAPIDocument.synchronized {
 
       val rootAPIDocumentWithVersion = rootAPIDocument.documents
-        .getOrElse(documentArgs.version,
-                   RootApiDocumentWithVersion(documentArgs.version, Map()))
+        .getOrElse(targetVersion,
+                   RootApiDocumentWithVersion(targetVersion, Map()))
 
       val apiDocumentCategory =
         rootAPIDocumentWithVersion.apiCategories
@@ -119,11 +125,11 @@ class ApiDocumentBuilder(private val apiClient: ApiClient) {
       apiCategories.put(documentArgs.category, newAPIDocumentCategory)
 
       val newRooAPIDocumentWithVersion =
-        RootApiDocumentWithVersion(documentArgs.version, apiCategories.toMap)
+        RootApiDocumentWithVersion(targetVersion, apiCategories.toMap)
 
       val newRootAPIDocumentWithVersions =
         mutable.Map(rootAPIDocument.documents.toSeq: _*)
-      newRootAPIDocumentWithVersions.put(documentArgs.version,
+      newRootAPIDocumentWithVersions.put(targetVersion,
                                          newRooAPIDocumentWithVersion)
 
       rootAPIDocument = RootApiDocument(rootAPIDocument.title,
