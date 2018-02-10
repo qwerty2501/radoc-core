@@ -2,11 +2,11 @@ package net.qwerty2501.radoc
 
 import net.qwerty2501.radoc
 
-trait ContentType {
+private trait ContentType {
   def contentType(): String
 }
 
-object ContentType {
+private object ContentType {
   val None: ContentType = () => ""
   val Json: ContentType = () => "application/json"
   val Xml: ContentType = () => "application/xml"
