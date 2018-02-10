@@ -38,7 +38,7 @@ object JsonBodyHint {
       defaultFieldModifier: FieldModifier): JsonBodyHint =
     apply(
       GenericJsonHintFactory
-        .generateExpected(expected, defaultFieldModifier)[T])
+        .generateExpected(expected, defaultFieldModifier))
 
   def expectedHint[T: TypeTag](expected: T): JsonBodyHint =
     expectedHint[T](expected, FieldModifier.Snake)
