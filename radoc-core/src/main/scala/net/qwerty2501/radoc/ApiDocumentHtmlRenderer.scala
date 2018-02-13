@@ -349,9 +349,9 @@ private object ApiDocumentHtmlRenderer {
       case plain: PlainPath => xml.Text(plain.path)
       case pathParameter: PathParameter =>
         renderParameter(pathParameter.parameter,
-                        pathParameter.parameter.value.toString)
+                        pathParameter.parameter.value.getValueString)
       case queryParameter: QueryParameter =>
-        <span>{renderParameter(queryParameter.parameter, queryParameter.parameter.field)}{"="}{renderParameter(queryParameter.parameter, queryParameter.parameter.value.toString)}</span>
+        <span>{renderParameter(queryParameter.parameter, queryParameter.parameter.field)}{"="}{renderParameter(queryParameter.parameter, queryParameter.parameter.value.getValueString)}</span>
       case p => xml.Text(p.toString)
     }
   }

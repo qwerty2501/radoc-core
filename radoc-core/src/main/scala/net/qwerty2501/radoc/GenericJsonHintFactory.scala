@@ -8,7 +8,7 @@ import com.github.dwickern.macros.NameOf._
 object GenericJsonHintFactory {
 
   private type JsonFieldHandler =
-    (FieldName, Option[Any], Type, FieldModifier) => JsonHint
+    (FieldName, Option[_], Type, FieldModifier) => JsonHint
   private case class FieldName(private val name: String) {
     def getName(fieldModifier: FieldModifier,
                 fieldHintAnnotation: FieldHintAnnotation): String =
@@ -38,7 +38,7 @@ object GenericJsonHintFactory {
     val defaultAssertFactory: ParameterAssertFactory
 
     def generate(fieldName: FieldName,
-                 value: Option[Any],
+                 value: Option[_],
                  t: Type,
                  fieldHintAnnotation: FieldHintAnnotation,
     ): JsonHint = {
@@ -48,21 +48,21 @@ object GenericJsonHintFactory {
       } else if (t.typeSymbol.asClass.isPrimitive) {
         generateValue(fieldName, value, t, fieldHintAnnotation)
       } else {
-        generateValue(fieldName, value, t, fieldHintAnnotation)
+        generateObject(fieldName, value, t, fieldHintAnnotation)
       }
 
     }
 
     def generateArray(name: FieldName,
-                      value: Option[Any],
+                      value: Option[_],
                       t: Type,
                       fieldHintAnnotation: FieldHintAnnotation): JsonHint
     def generateObject(name: FieldName,
-                       value: Option[Any],
+                       value: Option[_],
                        t: Type,
                        fieldHintAnnotation: FieldHintAnnotation): JsonHint
     def generateValue(name: FieldName,
-                      value: Option[Any],
+                      value: Option[_],
                       t: Type,
                       fieldHintAnnotation: FieldHintAnnotation): JsonHint
 
@@ -70,19 +70,19 @@ object GenericJsonHintFactory {
 
     def generateParameterHint(
         name: FieldName,
-        value: Option[Any],
+        value: Option[_],
         typeName: String,
         t: Type,
         fieldHintAnnotation: FieldHintAnnotation): ParameterHint =
       ParameterHint(
         Parameter(name.getName(defaultFieldModifier, fieldHintAnnotation),
-                  value.getOrElse(""),
+                  value,
                   typeName,
                   fieldHintAnnotation.parameter.description),
         (if (fieldHintAnnotation.defaultParameterAssertFactory != ParameterAssertFactory.default)
            fieldHintAnnotation.defaultParameterAssertFactory
          else defaultAssertFactory)
-          .generate(value.getOrElse(""), typeToClass(t)),
+          .generate(value, typeToClass(t)),
         fieldHintAnnotation.essentiality
       )
 
@@ -101,7 +101,7 @@ object GenericJsonHintFactory {
       ParameterAssertFactory.NoneAssertFactory
 
     def generateArray(name: FieldName,
-                      value: Option[Any],
+                      value: Option[_],
                       t: Type,
                       fieldHintAnnotation: FieldHintAnnotation): JsonHint = {
       val typeArgName = t.typeArgs.headOption
@@ -111,15 +111,15 @@ object GenericJsonHintFactory {
       JsonArrayHint(
         generateParameterHint(name, value, typeName, t, fieldHintAnnotation),
         generate(FieldName(""),
-          Option.empty,
-          t.typeArgs.head,
-          FieldHintAnnotation.default),
+                 Option.empty,
+                 t.typeArgs.head,
+                 FieldHintAnnotation.default),
         Seq()
       )
     }
 
     def generateObject(name: FieldName,
-                       value: Option[Any],
+                       value: Option[_],
                        t: Type,
                        fieldHintAnnotation: FieldHintAnnotation): JsonHint = {
 
@@ -155,7 +155,7 @@ object GenericJsonHintFactory {
     }
 
     def generateValue(name: FieldName,
-                      value: Option[Any],
+                      value: Option[_],
                       t: Type,
                       fieldHintAnnotation: FieldHintAnnotation): JsonHint =
       JsonValueHint(

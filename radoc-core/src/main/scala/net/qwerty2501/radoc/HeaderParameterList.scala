@@ -6,9 +6,10 @@ class HeaderParameterList(private var headers: Seq[Parameter]) {
     .map { t =>
       Parameter(
         t._1,
-        t._2
-          .map(_.value)
-          .mkString(","),
+        Option(
+          t._2
+            .map(_.value.getOrElse("null"))
+            .mkString(",")),
         t._2.map(_.typeName).mkString(","),
         t._2
           .map(_.description)

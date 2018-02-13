@@ -1,7 +1,7 @@
 package net.qwerty2501.radoc
 
 trait ParameterAssertFactory {
-  def generate(expected: Any, expectedType: Class[_]): ParameterAssert
+  def generate(expected: Option[_], expectedType: Class[_]): ParameterAssert
 }
 
 object ParameterAssertFactory {
@@ -16,6 +16,6 @@ object ParameterAssertFactory {
   val EqualTypeFactory: ParameterAssertFactory = (_, expectedType) =>
     ParameterAssert.typeEqualAssert(expectedType)
 
-  def originalAssert(assertHandler: ((Any, Parameter) => Unit)) =
+  def originalAssert(assertHandler: ((Option[_], Parameter) => Unit)) =
     ParameterAssert(assertHandler)
 }

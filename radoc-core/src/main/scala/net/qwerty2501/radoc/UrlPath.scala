@@ -22,7 +22,7 @@ trait UrlPath {
 
         case plain: PlainPath => plain.path
         case pathParameter: PathParameter =>
-          pathParameter.parameter.value.toString
+          pathParameter.parameter.value.getValueString
         case queryParameter: QueryParameter => queryParameter.display
         case p                              => p.toString
       }
@@ -72,7 +72,7 @@ private[radoc] case class PathParameter(parameter: Parameter)
 }
 private[radoc] case class QueryParameter(parameter: Parameter)
     extends PartOfUrlPath {
-  def display: String = parameter.field + "=" + parameter.value
+  def display: String = parameter.field + "=" + parameter.value.getValueString
 }
 
 class PathOfUrlPath private[radoc] (override val parts: Seq[PartOfUrlPath])
