@@ -239,16 +239,14 @@ private object ApiDocumentHtmlRenderer {
     }
 
     def renderExample(message: Message, contentId: String): Node = {
-      <div>
 
-        <button type="button" class="btn btn-info" data-toggle="collapse" data-target={"#"+contentId}>expand example</button>
-        <div id={contentId} class="collapse" >
+        <details>
+          <summary>expand example</summary>
           <div style="background:black;color:white;" >
             {renderContent(message,contentId)}
           </div>
+        </details>
 
-        </div>
-      </div>
     }
 
     def renderContent(message: Message, contentId: String): Node = {
