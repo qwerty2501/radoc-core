@@ -11,12 +11,9 @@ object FieldModifier {
   val None: FieldModifier = field => field
 
   val Snake: FieldModifier = field =>
-    "[A-Z\\d]".r.replaceAllIn(field, { m =>
-      "_" + m.group(0).toLowerCase()
-    })
+    field
+      .replaceAll("([A-Z]+)([A-Z][a-z])", "$1_$2")
+      .replaceAll("([a-z\\d])([A-Z])", "$1_$2")
+      .toLowerCase
 
-  val Camel: FieldModifier = field =>
-    "_([a-z\\d])".r.replaceAllIn(field, { m =>
-      m.group(1).toUpperCase
-    })
 }
