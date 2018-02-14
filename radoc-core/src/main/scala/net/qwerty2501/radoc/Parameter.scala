@@ -1,14 +1,17 @@
 package net.qwerty2501.radoc
 
 import scala.reflect._
-
+import scala.reflect.runtime.universe._
 class Parameter private (val field: String,
                          val value: Option[_],
                          val typeName: String,
                          val description: Text) {
 
-  def this(field: String, value: Option[_], tte: Class[_], description: Text) =
-    this(field, value, tte.getSimpleName, description)
+  def this(field: String, value: Option[_], cs: Class[_], description: Text) =
+    this(field,
+         value,
+         rootMirror.classSymbol(cs).name.toTypeName.toString,
+         description)
 
   lazy val color: Color = ParameterColor.color
 }
@@ -28,12 +31,12 @@ object Parameter {
             description: Text): Parameter =
     new Parameter(field, value, typeName, description)
 
-  def apply[T: ClassTag](field: String, value: T, description: Text)(
+  def apply[T](field: String, value: T, description: Text)(
       implicit ct: ClassTag[T]): Parameter =
     new Parameter(field, Option(value), ct.runtimeClass, description)
-  def apply[T: ClassTag](field: String, description: Text)(
-      implicit ct: ClassTag[T]): Parameter =
-    new Parameter(field, Option.empty, ct.runtimeClass, description)
+
+  def apply(field: String, description: Text): Parameter =
+    new Parameter(field, Option.empty, "", description)
 
   def apply(field: String,
             value: Option[_],
