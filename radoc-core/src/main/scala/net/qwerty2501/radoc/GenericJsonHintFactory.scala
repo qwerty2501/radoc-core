@@ -1,6 +1,6 @@
 package net.qwerty2501.radoc
-import java.util.InvalidPropertiesFormatException
-
+import java.time._
+import java.time.chrono.ChronoZonedDateTime
 import scala.reflect.runtime.universe._
 import scala.tools.reflect.ToolBox
 import com.github.dwickern.macros.NameOf._
@@ -21,7 +21,13 @@ object GenericJsonHintFactory {
     classOf[FieldHintAnnotation].getClassLoader)
   private val toolbox = mirror.mkToolBox()
 
-  def generate[T: TypeTag](defaultFieldModifier: FieldModifier): JsonHint = {
+  private val jsonValueTypes = Seq(
+    typeOf[String],
+    typeOf[ChronoZonedDateTime[LocalDate]]
+  )
+
+  def generate[T: TypeTag: NotNothing](
+      defaultFieldModifier: FieldModifier): JsonHint = {
     new DefaultGenerator(defaultFieldModifier).generate(
       FieldName(""),
       Option.empty,
@@ -29,7 +35,7 @@ object GenericJsonHintFactory {
       FieldHintAnnotation.default)
   }
 
-  def generateExpected[T: TypeTag](
+  def generateExpected[T: TypeTag: NotNothing](
       expected: T,
       defaultFieldModifier: FieldModifier): JsonHint = ???
 
@@ -45,7 +51,8 @@ object GenericJsonHintFactory {
 
       if (t.typeSymbol.fullName == seqTypeName) {
         generateArray(fieldName, value, t, fieldHintAnnotation)
-      } else if (t.typeSymbol.asClass.isPrimitive) {
+      } else if (t.typeSymbol.asClass.isPrimitive || jsonValueTypes.exists(
+                   jvt => t == jvt || t.baseClasses.exists(_ == jvt))) {
         generateValue(fieldName, value, t, fieldHintAnnotation)
       } else {
         generateObject(fieldName, value, t, fieldHintAnnotation)
@@ -67,6 +74,9 @@ object GenericJsonHintFactory {
                       fieldHintAnnotation: FieldHintAnnotation): JsonHint
 
     def typeToClass(t: Type): Class[_] = rootMirror.runtimeClass(t)
+
+    protected def getTypeName(t: Type): String =
+      t.typeSymbol.asClass.name.toTypeName.toString
 
     def generateParameterHint(
         name: FieldName,
@@ -105,7 +115,7 @@ object GenericJsonHintFactory {
                       t: Type,
                       fieldHintAnnotation: FieldHintAnnotation): JsonHint = {
       val typeArgName = t.typeArgs.headOption
-        .fold("____unknown_generic_argument_type____")(_.toString)
+        .fold("____unknown_generic_argument_type____")(getTypeName)
       val typeName = pickTypeName("[]" + typeArgName, fieldHintAnnotation)
 
       JsonArrayHint(
@@ -126,7 +136,7 @@ object GenericJsonHintFactory {
       JsonObjectHint(
         generateParameterHint(name,
                               value,
-                              t.typeSymbol.name.toString,
+                              getTypeName(t),
                               t,
                               fieldHintAnnotation),
         t.members.collect {
@@ -159,12 +169,11 @@ object GenericJsonHintFactory {
                       t: Type,
                       fieldHintAnnotation: FieldHintAnnotation): JsonHint =
       JsonValueHint(
-        generateParameterHint(
-          name,
-          value,
-          pickTypeName(t.typeSymbol.name.toString, fieldHintAnnotation),
-          t,
-          fieldHintAnnotation))
+        generateParameterHint(name,
+                              value,
+                              pickTypeName(getTypeName(t), fieldHintAnnotation),
+                              t,
+                              fieldHintAnnotation))
   }
 
 }
