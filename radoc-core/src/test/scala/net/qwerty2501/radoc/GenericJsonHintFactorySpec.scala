@@ -6,56 +6,79 @@ import scala.reflect.runtime.universe._
 class GenericJsonHintFactorySpec extends FlatSpec with Matchers {
 
   case class TestChild(message: String, value: Double)
+
   case class TestRoot(id: Int,
                       child: TestChild,
                       children: Seq[TestChild],
                       hintTest: String,
                       ids: Seq[Int],
                       APIString: String)
-  it should "can construct JsonHint" in {
 
-    val jsonHint =
-      GenericJsonHintFactory.generate[TestRoot](FieldModifier.Snake)
+  private def checkTestChildHint(child: JsonObjectHint): Unit = {
+    child.parameterHint.typeName should be("TestChild")
+    child.childrenHints.foreach {
+      case message: JsonValueHint if message.parameterHint.field == "message" =>
+        message.parameterHint.typeName should be("String")
 
-    jsonHint match {
-      case testRoot: JsonObjectHint =>
-        testRoot.parameterHint.parameter.field should be("")
-        testRoot.parameterHint.parameter.typeName should be("TestRoot")
+      case value: JsonValueHint if value.parameterHint.field == "value" =>
+        value.parameterHint.typeName should be("Double")
 
-        testRoot.parameterHint.essentiality should be(Essentiality.Mandatory)
-        testRoot.parameterHint.assert should be(ParameterAssert.apply())
-        testRoot.childrenHints.length should be(6)
-        testRoot.childrenHints
-          .map(_.parameterHint.parameter.field)
-          .distinct
-          .length should be(testRoot.childrenHints.length)
-        testRoot.childrenHints.foreach {
-          case idValue: JsonValueHint if idValue.parameterHint.field == "id" =>
-            idValue.parameterHint.typeName should be("Int")
+      case invalidChild => fail("invalid child:" + invalidChild.parameterHint.field)
+    }
+    it should "can construct JsonHint" in {
 
-          case child: JsonObjectHint if child.parameterHint.field == "child" =>
-            child.parameterHint.typeName should be("TestChild")
+      val jsonHint =
+        GenericJsonHintFactory.generate[TestRoot](FieldModifier.Snake)
 
-          case children: JsonArrayHint
+      jsonHint match {
+        case testRoot: JsonObjectHint =>
+          testRoot.parameterHint.parameter.field should be("")
+          testRoot.parameterHint.parameter.typeName should be("TestRoot")
+
+          testRoot.parameterHint.essentiality should be(Essentiality.Mandatory)
+          testRoot.parameterHint.assert should be(ParameterAssert.apply())
+          testRoot.childrenHints.length should be(6)
+          testRoot.childrenHints
+            .map(_.parameterHint.parameter.field)
+            .distinct
+            .length should be(testRoot.childrenHints.length)
+          testRoot.childrenHints.foreach {
+            case idValue: JsonValueHint if idValue.parameterHint.field == "id" =>
+              idValue.parameterHint.typeName should be("Int")
+
+            case child: JsonObjectHint if child.parameterHint.field == "child" => checkTestChildHint(child)
+
+
+            case children: JsonArrayHint
               if children.parameterHint.field == "children" =>
-            children.parameterHint.typeName should be("[]TestChild")
+              children.parameterHint.typeName should be("[]TestChild")
+              children.childrenTypeHint match {
+                case testChild: JsonObjectHint => checkTestChildHint(testChild)
 
-          case idHints: JsonArrayHint if idHints.parameterHint.field == "ids" =>
-            idHints.parameterHint.typeName should be("[]Int")
+                case invalidType => fail("invalid type:" + invalidType.parameterHint.field)
+              }
 
-          case apiString: JsonValueHint
+
+
+
+            case idHints: JsonArrayHint if idHints.parameterHint.field == "ids" =>
+              idHints.parameterHint.typeName should be("[]Int")
+
+            case apiString: JsonValueHint
               if apiString.parameterHint.field == "api_string" =>
-            apiString.parameterHint.typeName should be("String")
+              apiString.parameterHint.typeName should be("String")
 
-          case hintTest: JsonValueHint
+            case hintTest: JsonValueHint
               if hintTest.parameterHint.field == "hint_test" =>
-            hintTest.parameterHint.typeName should be("String")
+              hintTest.parameterHint.typeName should be("String")
 
-          case invalidChild =>
-            fail("invalid child:" + invalidChild.parameterHint.field)
-        }
+            case invalidChild =>
+              fail("invalid child:" + invalidChild.parameterHint.field)
+          }
 
-      case _ => fail("json hint is not object")
+
+        case _ => fail("json hint is not object")
+      }
     }
   }
 }
