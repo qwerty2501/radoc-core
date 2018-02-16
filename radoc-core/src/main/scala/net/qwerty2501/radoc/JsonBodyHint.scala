@@ -26,24 +26,7 @@ object JsonBodyHint {
     val typeParameterMap = foldHints(jsonHint, Map())
     new JsonBodyHint(recompose(jsonHint, typeParameterMap), typeParameterMap)
   }
-  /*
-  def apply[T: NotNothing](defaultFieldModifier: FieldModifier): JsonBodyHint =
-    apply(GenericJsonHintFactory.generate[T](defaultFieldModifier))
 
-  def apply[T: TypeTag: NotNothing: ClassTag](): JsonBodyHint =
-    apply[T](FieldModifier.Snake)
-
-  def expectedHint[T: TypeTag: NotNothing: ClassTag](
-      expected: T,
-      defaultFieldModifier: FieldModifier): JsonBodyHint =
-    apply(
-      GenericJsonHintFactory
-        .generateExpected(expected, defaultFieldModifier))
-
-  def expectedHint[T: TypeTag: NotNothing: ClassTag](
-      expected: T): JsonBodyHint =
-    expectedHint[T](expected, FieldModifier.Snake)
-   */
   private def recompose(
       jsonHint: JsonHint,
       typeParameterMap: Map[String, Seq[Parameter]]): JsonHint = {
