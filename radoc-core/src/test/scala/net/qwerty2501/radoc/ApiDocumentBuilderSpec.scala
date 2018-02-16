@@ -45,21 +45,6 @@ class ApiDocumentBuilderSpec extends FlatSpec with Matchers {
     messageDocument.response should be(response)
   }
 
-  it should "can not add description twice to same api document" in {
-    val apiDocumentBuilder = new ApiDocumentBuilderMock()
-    val path = UrlPath / "test/path"
-    val description = Text("description")
-
-    intercept[IllegalStateException] {
-      apiDocumentBuilder.requestAndRequest(
-        Request.get(path),
-        DocumentArgs(description = description))
-      apiDocumentBuilder.requestAndRequest(
-        Request.get(path),
-        DocumentArgs(description = description))
-    }
-  }
-
   it should "can add message document with same message name. But append with numbers." in {
     val apiDocumentBuilder = new ApiDocumentBuilderMock()
     val path = UrlPath / "test/path"

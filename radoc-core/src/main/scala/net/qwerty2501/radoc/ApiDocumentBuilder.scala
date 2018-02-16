@@ -57,10 +57,6 @@ class ApiDocumentBuilder(private val apiClient: ApiClient,
                                apiDocumentCategory.category,
                                rootAPIDocumentWithVersion.version))
 
-      if (apiDocument.description != Text() && documentArgs.description != Text()) {
-        throw new IllegalStateException("description is already set.")
-      }
-
       val messageName = generateMessageName(apiDocument.messageDocumentMap,
                                             "[%d %s]%s"
                                               .format(res.status.code,
@@ -72,7 +68,10 @@ class ApiDocumentBuilder(private val apiClient: ApiClient,
         apiDocument.path,
         apiDocument.messageDocumentMap + (messageName ->
           MessageDocument(messageName, req, res)),
-        if (documentArgs.description != Text()) documentArgs.description
+        if (documentArgs.description != Text())
+          if (apiDocument.description != Text() && documentArgs.description != Text())
+            Text(apiDocument.description, documentArgs.description)
+          else documentArgs.description
         else apiDocument.description,
         apiDocumentGroup.group,
         apiDocumentCategory.category,
