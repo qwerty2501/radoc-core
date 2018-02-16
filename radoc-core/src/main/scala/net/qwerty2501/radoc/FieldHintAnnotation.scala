@@ -17,7 +17,8 @@ case class FieldHintAnnotation(
   def this(parameter: Parameter) =
     this(parameter, ParameterAssertFactory.default)
 
-  def this(description: Text) = this(Parameter("", description))
+  def this(description: Text) =
+    this(Parameter("", Option.empty, "Any", description))
 }
 
 private object FieldHintAnnotation {

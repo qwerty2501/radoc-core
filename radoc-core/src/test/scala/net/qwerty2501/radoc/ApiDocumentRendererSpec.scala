@@ -18,7 +18,10 @@ class ApiDocumentRendererSpec extends FlatSpec with Matchers {
     val sampleResponse = Response(
       Status.Ok,
       Seq(
-        Parameter("Content-Type", "application/json", Text("content type"))
+        Parameter("Content-Type",
+                  "application/json",
+                  "String",
+                  Text("content type"))
       ),
       sampleJson
     )

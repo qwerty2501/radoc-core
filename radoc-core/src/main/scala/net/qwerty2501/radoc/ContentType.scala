@@ -15,7 +15,8 @@ private object ContentType {
     val contentType =
       headers.getHeaders.headOption
         .find(_.field == "Content-Type")
-        .getOrElse(Parameter("Content-Type", Option.empty, radoc.Text()))
+        .getOrElse(
+          Parameter("Content-Type", Option.empty, "String", radoc.Text()))
         .value
         .toString
 
