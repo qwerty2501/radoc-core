@@ -29,12 +29,6 @@ object Parameter {
             typeName: String,
             description: Text): Parameter =
     new Parameter(field, value, typeName, description)
-  def apply(field: String,
-            value: Option[_],
-            typeName: String,
-            description: Text,
-            color: Color): Parameter =
-    new Parameter(field, value, typeName, description)
 
   def apply(field: String,
             value: Option[_],

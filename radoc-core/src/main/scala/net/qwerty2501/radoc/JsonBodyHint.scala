@@ -58,7 +58,7 @@ object JsonBodyHint {
       jsonObjectHint: JsonObjectHint,
       typeParameterMap: Map[String, Seq[Parameter]]): JsonObjectHint = {
     val types =
-      typeParameterMap(jsonObjectHint.parameterHint.parameter.typeName)
+      typeParameterMap(jsonObjectHint.parameterHint.typeName)
     val children = jsonObjectHint.childrenHints.map { jsonHint =>
       recomposeChildren(jsonHint, typeParameterMap, types)
     }
@@ -70,10 +70,12 @@ object JsonBodyHint {
                                 types: Seq[Parameter]): JsonHint = {
     val newJsonHint = recompose(jsonHint, typeParameterMap)
     val newParameter = types
-      .find(_.field == newJsonHint.parameterHint.parameter.field)
-      .getOrElse(newJsonHint.parameterHint.parameter)
+      .find(_.field == newJsonHint.parameterHint.field)
+      .getOrElse(newJsonHint.parameterHint.toParameter)
     val newParameterHint =
-      ParameterHint(newParameter,
+      ParameterHint(newParameter.field,
+                    newParameter.typeName,
+                    newParameter.description,
                     newJsonHint.parameterHint.assert,
                     newJsonHint.parameterHint.essentiality)
     jsonHint match {
@@ -98,8 +100,8 @@ object JsonBodyHint {
 
   private def getObjectHints(
       jsonObjectHint: JsonObjectHint): (String, Seq[Parameter]) =
-    jsonObjectHint.parameterHint.parameter.typeName -> jsonObjectHint.childrenHints
-      .map(_.parameterHint.parameter)
+    jsonObjectHint.parameterHint.typeName -> jsonObjectHint.childrenHints
+      .map(_.parameterHint.toParameter)
 
   private def foldObjectHints(
       jsonObjectHint: JsonObjectHint,
@@ -117,6 +119,6 @@ object JsonBodyHint {
     foldHints(jsonArrayHint.childrenTypeHint, sourceMap)
   private def getValueHint(jsonValueHint: JsonValueHint,
                            sourceMap: Map[String, Seq[Parameter]]): Parameter =
-    jsonValueHint.parameterHint.parameter
+    jsonValueHint.parameterHint.toParameter
 
 }

@@ -7,22 +7,19 @@ class JsonBodyHintSpec extends FlatSpec with Matchers {
   it should "recompose same type" in {
     val hint = JsonBodyHint(
       JsonObjectHint(
-        ParameterHint(Parameter("", Option.empty, "TestRoot", Text())),
+        ParameterHint("", "TestRoot", Text()),
         Seq(
           JsonObjectHint(
-            ParameterHint(
-              Parameter("member1", Option.empty, "TestObject1", Text())),
+            ParameterHint("member1", "TestObject1", Text()),
             Seq(
               JsonValueHint(ParameterHint("id", "Int", Text())),
               JsonValueHint(ParameterHint("id2", "Double", Text()))
             )
           ),
-          JsonObjectHint(
-            ParameterHint(
-              Parameter("member2", Option.empty, "TestObject1", Text())),
-            Seq(
-              JsonValueHint(ParameterHint("tt", "String", Text()))
-            ))
+          JsonObjectHint(ParameterHint("member2", "TestObject1", Text()),
+                         Seq(
+                           JsonValueHint(ParameterHint("tt", "String", Text()))
+                         ))
         )
       ))
     hint.rootTypeName should be("TestRoot")
