@@ -42,4 +42,39 @@ class JsonBodyHintMergerSpec extends FlatSpec with Matchers {
     secondParameter.description should be(Text())
   }
 
+  it should "can parse with JsonBodyHint" in {
+    val newHint = merge(
+      """
+        |{
+        | "member1":33,
+        | "member2":"test member"
+        |}
+      """.stripMargin,
+      JsonBodyHint(
+        JsonObjectHint(
+          ParameterHint("TestObject", Text()),
+          Seq(
+            JsonValueHint(
+              ParameterHint("member1", "Int", Text("member1_text"))),
+            JsonValueHint(
+              ParameterHint("member2", "String", Text("member2_text")))
+          )
+        ))
+    )
+
+    newHint.typeParameterMap.size should be(1)
+
+    val parameters = newHint.typeParameterMap("TestObject")
+    parameters.length should be(2)
+    val firstParameter = parameters.head
+    firstParameter.field should be("member1")
+    firstParameter.typeName should be("Int")
+    firstParameter.description should be(Text("member1_text"))
+
+    val secondParameter = parameters(1)
+    secondParameter.field should be("member2")
+    secondParameter.typeName should be("String")
+    secondParameter.description should be(Text("member2_text"))
+  }
+
 }
