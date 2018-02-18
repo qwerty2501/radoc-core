@@ -82,10 +82,10 @@ class ApiDocumentRendererSpec extends FlatSpec with Matchers {
     val path = Paths.get(filePath)
     Files.deleteIfExists(path)
     val builder = new ApiDocumentBuilderMock()
-    builder.requestAndRequest(
+    builder.recordAndRequest(
       Request.get(UrlPath / "test/path"),
       DocumentArgs("", description = Text("v1"), version = Version(1, 0, 0)))
-    builder.requestAndRequest(
+    builder.recordAndRequest(
       Request.get(UrlPath / "test/path"),
       DocumentArgs("", description = Text("v2"), version = Version(2, 0, 0)))
     builder.setRootDocumentTitle("version title")

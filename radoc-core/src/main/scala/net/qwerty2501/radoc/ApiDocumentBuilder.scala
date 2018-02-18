@@ -11,9 +11,9 @@ class ApiDocumentBuilder(private val apiClient: ApiClient,
     rootAPIDocument = RootApiDocument(title, rootAPIDocument.documents)
   def buildRootAPIDocument: RootApiDocument = rootAPIDocument
 
-  def requestAndRequest(req: Request): Response =
-    requestAndRequest(req, DocumentArgs())
-  def requestAndRequest(req: Request, documentArgs: DocumentArgs): Response = {
+  def recordAndRequest(req: Request): Response =
+    recordAndRequest(req, DocumentArgs())
+  def recordAndRequest(req: Request, documentArgs: DocumentArgs): Response = {
     val res = apiClient.request(req)
     append(req, res, documentArgs)
     res
@@ -21,6 +21,7 @@ class ApiDocumentBuilder(private val apiClient: ApiClient,
 
   def append(req: Request, res: Response): Unit =
     append(req, res, DocumentArgs())
+
   def append(req: Request, res: Response, documentArgs: DocumentArgs): Unit = {
     val apiGroup =
       if (documentArgs.group == "") req.path.displayPath else documentArgs.group

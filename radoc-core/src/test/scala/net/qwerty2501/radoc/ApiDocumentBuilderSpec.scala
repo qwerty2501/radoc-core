@@ -8,7 +8,7 @@ class ApiDocumentBuilderSpec extends FlatSpec with Matchers {
   it should "can add request response" in {
     val apiDocumentBuilder = new ApiDocumentBuilderMock()
     val path = UrlPath / "test" / "path"
-    val response = apiDocumentBuilder.requestAndRequest(Request.get(path))
+    val response = apiDocumentBuilder.recordAndRequest(Request.get(path))
 
     val apiDocument = apiDocumentBuilder.buildRootAPIDocument
       .documents(Version.firstVersion)
@@ -28,7 +28,7 @@ class ApiDocumentBuilderSpec extends FlatSpec with Matchers {
     val apiDocumentBuilder = new ApiDocumentBuilderMock()
     val path = UrlPath / "test/path"
     val description = Text("description")
-    val response = apiDocumentBuilder.requestAndRequest(
+    val response = apiDocumentBuilder.recordAndRequest(
       Request.get(path),
       DocumentArgs(description = description))
 
@@ -49,8 +49,8 @@ class ApiDocumentBuilderSpec extends FlatSpec with Matchers {
     val apiDocumentBuilder = new ApiDocumentBuilderMock()
     val path = UrlPath / "test/path"
 
-    apiDocumentBuilder.requestAndRequest(Request.get(path))
-    apiDocumentBuilder.requestAndRequest(Request.get(path))
+    apiDocumentBuilder.recordAndRequest(Request.get(path))
+    apiDocumentBuilder.recordAndRequest(Request.get(path))
 
     val rootAPIDocument = apiDocumentBuilder.buildRootAPIDocument
 
@@ -67,8 +67,8 @@ class ApiDocumentBuilderSpec extends FlatSpec with Matchers {
 
     val apiDocumentBuilder = new ApiDocumentBuilderMock()
     val targetPath = UrlPath / "test/path"
-    apiDocumentBuilder.requestAndRequest(Request.get(targetPath))
-    apiDocumentBuilder.requestAndRequest(
+    apiDocumentBuilder.recordAndRequest(Request.get(targetPath))
+    apiDocumentBuilder.recordAndRequest(
       Request.post(targetPath, body = Body()))
     val apiDocumentGroup = apiDocumentBuilder.buildRootAPIDocument
       .documents(Version.firstVersion)
