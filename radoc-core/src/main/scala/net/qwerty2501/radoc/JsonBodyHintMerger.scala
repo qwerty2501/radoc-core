@@ -157,7 +157,7 @@ private class JsonBodyHintMerger {
         JsonValueHint(ParameterHint(field, typeName, Text()))
       case actual =>
         throw new AssertionError(
-          "expected:" + nameOf(JsonValueHint) + "but actual:" + actual.getClass.getSimpleName)
+          "expected:" + nameOf(JsonValueHint) + " but actual:" + actual.getClass.getSimpleName)
     }
 
   private def toArray(field: String, jsonHint: JsonHint): JsonArrayHint =
@@ -169,7 +169,7 @@ private class JsonBodyHintMerger {
                       Seq())
       case actual =>
         throw new AssertionError(
-          "expected:" + nameOf(JsonArrayHint) + "but actual:" + actual.getClass.getSimpleName)
+          "expected:" + nameOf(JsonArrayHint) + " but actual:" + actual.getClass.getSimpleName)
     }
 
   private def toObject(field: String, jsonHint: JsonHint): JsonObjectHint =
@@ -179,7 +179,7 @@ private class JsonBodyHintMerger {
         JsonObjectHint(ParameterHint(field, objectName(), Text()), Seq())
       case actual =>
         throw new AssertionError(
-          "expected:" + nameOf(JsonObject) + "but actual:" + actual.getClass.getSimpleName)
+          "expected:" + nameOf(JsonObject) + " but actual:" + actual.getClass.getSimpleName)
     }
 
   private def objectName(): String = {

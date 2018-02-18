@@ -15,6 +15,15 @@ class JsonBodyHintMergerSpec extends FlatSpec with Matchers {
       jsonBodyHint
     )
 
+  private def checkParameter(parameter: Parameter,
+                             field: String,
+                             typeName: String,
+                             description: Text) = {
+    parameter.field should be(field)
+    parameter.typeName should be(typeName)
+    parameter.description should be(description)
+  }
+
   it should "can parse" in {
 
     val newHint = merge(
@@ -31,15 +40,10 @@ class JsonBodyHintMergerSpec extends FlatSpec with Matchers {
 
     val parameters = newHint.typeParameterMap("Unknown Object 1")
     parameters.length should be(2)
-    val firstParameter = parameters.head
-    firstParameter.field should be("member1")
-    firstParameter.typeName should be("Number")
-    firstParameter.description should be(Text())
+    checkParameter(parameters.head, "member1", "Number", Text())
 
-    val secondParameter = parameters(1)
-    secondParameter.field should be("member2")
-    secondParameter.typeName should be("String")
-    secondParameter.description should be(Text())
+    checkParameter(parameters(1), "member2", "String", Text())
+
   }
 
   it should "can parse with JsonBodyHint" in {
@@ -47,7 +51,11 @@ class JsonBodyHintMergerSpec extends FlatSpec with Matchers {
       """
         |{
         | "member1":33,
-        | "member2":"test member"
+        | "member2":"test member",
+        | "member3":{
+        |   "child_member1":"tte",
+        |   "child_member2":33
+        | }
         |}
       """.stripMargin,
       JsonBodyHint(
@@ -62,19 +70,23 @@ class JsonBodyHintMergerSpec extends FlatSpec with Matchers {
         ))
     )
 
-    newHint.typeParameterMap.size should be(1)
+    newHint.typeParameterMap.size should be(2)
 
     val parameters = newHint.typeParameterMap("TestObject")
-    parameters.length should be(2)
-    val firstParameter = parameters.head
-    firstParameter.field should be("member1")
-    firstParameter.typeName should be("Int")
-    firstParameter.description should be(Text("member1_text"))
+    parameters.length should be(3)
+    checkParameter(parameters.head, "member1", "Int", Text("member1_text"))
 
-    val secondParameter = parameters(1)
-    secondParameter.field should be("member2")
-    secondParameter.typeName should be("String")
-    secondParameter.description should be(Text("member2_text"))
+    checkParameter(parameters(1), "member2", "String", Text("member2_text"))
+
+    checkParameter(parameters(2), "member3", "Unknown Object 1", Text())
+
+    val childParameters = newHint.typeParameterMap("Unknown Object 1")
+    childParameters.length should be(2)
+
+    checkParameter(childParameters.head, "child_member1", "String", Text())
+
+    checkParameter(childParameters(1), "child_member2", "Number", Text())
+
   }
 
 }
