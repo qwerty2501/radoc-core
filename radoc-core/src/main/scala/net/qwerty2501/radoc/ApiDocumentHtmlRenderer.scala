@@ -226,23 +226,35 @@ private object ApiDocumentHtmlRenderer {
       rootApiDocument: RootApiDocument,
       context: ApiDocumentHtmlRendererContext): Elem = {
 
-    def renderMessage(message: Message, contentId: String): Elem = {
+    def renderMessage(message: Message,
+                      renderMessageHeadHandler: => Node,
+                      contentId: String): Elem = {
       <div>
         <div>
           {renderParameters("Headers", message.headers.getHeaders)}
+          {
+            if (message.bodyHint.typeParameterMap.nonEmpty){
+              <span class="font-weight-bold" style="font-size:20px;">Body Content Fields</span>
+              <div class="card card-body bg-light">
+                {renderBodyHint(message.bodyHint)}
+              </div>
+            }
+          }
+
         </div>
-
-        {renderExample(message,contentId)}
-
+        {renderExample(message,renderMessageHeadHandler,contentId)}
       </div>
 
     }
 
-    def renderExample(message: Message, contentId: String): Node = {
+    def renderExample(message: Message,
+                      renderMessageHeadHandler: => Node,
+                      contentId: String): Node = {
 
-        <details>
+      <details>
           <summary>expand example</summary>
           <div style="background:black;color:white;" >
+            {renderMessageHeadHandler}
             {renderContent(message,contentId)}
           </div>
         </details>
@@ -268,7 +280,7 @@ private object ApiDocumentHtmlRenderer {
     def renderParameters(title: String, parameters: Seq[Parameter]): Node = {
       if (parameters.nonEmpty) {
         <div>
-          <div ><h5>{title}</h5></div>
+          <div ><span class="font-weight-bold" style="font-size:20px;">{title}</span></div>
           <table class="table table-sm table-striped table-bordered">
             <thead class="thead-inverse">
               <tr>
@@ -298,6 +310,16 @@ private object ApiDocumentHtmlRenderer {
       } else xml.Text("")
 
     }
+
+    def renderBodyHint(bodyHint: BodyHint): Node = {
+      <div>
+        {
+          bodyHint.typeParameterMap.map {
+            case (key, value) => renderParameters(key, value)
+          }
+        }
+      </div>
+    }
     val ti = tabId(currentApiDocument, messageDocument)
     <div id={ti} class={"tab-pane" + (if (messageDocument == currentApiDocument.messageDocumentMap.values.head)" active" else "") } >
       <p>
@@ -306,12 +328,13 @@ private object ApiDocumentHtmlRenderer {
         {renderUrlPathOuter(renderActualURLPath(messageDocument.request.path))}
         {renderParameters("Path parameters",messageDocument.request.path.pathParameters)}
         {renderParameters("Queries",messageDocument.request.path.queries)}
-        <div>{renderMessage(messageDocument.request,"request-content-" + ti)}</div>
+
+        <div>{renderMessage(messageDocument.request,xml.Text(""),"request-content-" + ti)}</div>
       </p>
 
       <p>
         <h3>Response</h3>
-        <div>{renderMessage(messageDocument.response,"response-content-"+ ti)}</div>
+        <div>{renderMessage(messageDocument.response,xml.Text(""),"response-content-"+ ti)}</div>
       </p>
 
     </div>
