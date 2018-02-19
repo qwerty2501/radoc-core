@@ -184,6 +184,10 @@ private object ApiDocumentHtmlRenderer {
             case Method.Delete => "badge-danger"
             case _ =>"badge-default"
           } ) } ><span class="font-weight-bold text-white"  style="font-size:16px;" >{apiDocument.method}</span></div>
+
+        </p>
+        <p>
+          {renderUrlPathOuter(xml.Text(apiDocument.path.displayPath))}
         </p>
         <div>
           <p>
@@ -197,6 +201,7 @@ private object ApiDocumentHtmlRenderer {
             context))}
           </p>
         </div>
+
 
 
         <ul class="nav nav-pills">
@@ -316,9 +321,13 @@ private object ApiDocumentHtmlRenderer {
     val ti = tabId(currentApiDocument, currentMessageDocument)
     <div id={ti} class={"tab-pane" + (if (currentMessageDocument == currentApiDocument.messageDocumentMap.values.head)" active" else "") } >
       <p>
-        {renderUrlPathOuter(renderDisplayUrlPath(currentMessageDocument.request.path))}
+
         <h3>Request</h3>
+
+
         {renderUrlPathOuter(renderActualURLPath(currentMessageDocument.request.path))}
+
+
         {renderParameters("Path parameters",currentMessageDocument.request.path.pathParameters,htmlRenderArguments)}
         {renderParameters("Queries",currentMessageDocument.request.path.queries,htmlRenderArguments)}
 
@@ -354,7 +363,9 @@ private object ApiDocumentHtmlRenderer {
       case plain: PlainPath => xml.Text(plain.path)
       case pathParameter: PathParameter =>
         renderParameter(pathParameter.parameter, pathParameter.displayField)
-      case separator: Separator => xml.Text(separator.toString)
+      case queryParameter: QueryParameter =>
+        <span>{renderParameter(queryParameter.parameter, queryParameter.parameter.field)}{"="}{renderParameter(queryParameter.parameter, "{" +queryParameter.parameter.field + "}")}</span>
+      case p => xml.Text(p.toString)
     }
   }
 
