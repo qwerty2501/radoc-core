@@ -232,7 +232,7 @@ private object ApiDocumentHtmlRenderer {
         {
         if (message.bodyHint.typeParameterMap.nonEmpty){
           <span class="font-weight-bold" style="font-size:20px;">Body Content Fields</span>
-            <div class="card card-body bg-light">
+            <div class="card card-body">
               {renderBodyHint(message.bodyHint,htmlRenderArguments)}
             </div>
         }
